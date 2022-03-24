@@ -1,0 +1,320 @@
+@font-face {
+  font-family: "icomoon";
+  src: url("../../public/assets/fonts/icomoon.eot?lp3l8a");
+  src: url("../../public/assets/fonts/icomoon.eot?lp3l8a#iefix")
+      format("embedded-opentype"),
+    url("../../public/assets/fonts/icomoon.ttf?lp3l8a") format("truetype"),
+    url("../../public/assets/fonts/icomoon.woff?lp3l8a") format("woff"),
+    url("../../public/assets/fonts/icomoon.svg?lp3l8a#icomoon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.footer {
+  background: #000;
+  padding: 50px 0 20px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.footerNav {
+  margin: 0 auto;
+  width: 100%;
+}
+.footerBrand {
+  padding: 0 15px;
+}
+.footerTopLinks {
+  display: flex;
+  flex-direction: column;
+}
+.footerTopLinkHeaderContainer {
+  padding: 0 15px;
+  margin: 0;
+}
+.footerTopLink {
+  margin: 50px 0 22px;
+  color: #919496;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.footerTopLinkHeaderContainer dd {
+  padding: 3px 0 15px;
+  display: block;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+  color: #fff;
+}
+.footerSocialLinks {
+  margin: 60px 15px 15px;
+}
+
+.footerSocialItems {
+  margin: 20px 0 0;
+  padding: 0;
+}
+.footerSocialItems span {
+  display: block;
+  cursor: pointer;
+  position: relative;
+  margin: 0 7px;
+  width: 50px;
+  height: 50px;
+  font-size: 0;
+  line-height: 0;
+  text-align: center;
+  text-decoration: none;
+}
+
+.footerSocialItems span:after {
+  position: relative;
+  display: block;
+  font-family: "icomoon";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* color: #1a3186; */
+  color: white;
+  font-size: 23px;
+  line-height: 50px;
+}
+.footerSocialItems span:hover,
+.footerSocialItems span:focus {
+  text-decoration: none;
+}
+.footerSocialItem {
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.InstagramIconContainer {
+  border-radius: 50%;
+  background-color: #222326;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+
+.InstagramIcon {
+  display: block;
+  padding-left: 2px;
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+}
+
+.footerSocialItems.spinIcon span:hover:after,
+.footerSocialItems.spinIcon span:focus:after {
+  transition: transform 0.4s ease-out;
+  transform: rotateZ(360deg);
+}
+.footerSocialItems.square span:hover:before,
+.footerSocialItems.square span:focus:before {
+  border-radius: 0;
+}
+.footerSocialItems.bounce span:hover,
+.footerSocialItems.bounce span:focus {
+  -webkit-animation: bounce 1s;
+  animation: bounce 1s;
+}
+.footerSocialItems .iconLinkedin:after {
+  content: "\eaca";
+}
+
+.footerSocialItems .FacebookIcon:after {
+  content: "\ea90";
+}
+
+.footerSocialItems .TwitterIcon:after {
+  content: "\ea96";
+}
+
+.footerSocialItems .InstagramIcon:after {
+  content: "\ea92";
+}
+
+.footerSocialItems .iconYoutube:after {
+  content: "\ea9d";
+}
+
+@-webkit-keyframes bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    transition-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -6px, 0);
+  }
+  70% {
+    transition-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+  40% {
+    transition-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -6px, 0);
+  }
+  70% {
+    transition-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.footerLanguage {
+  margin: 0 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+.footerLanguageLink {
+  padding: 1em 0;
+  color: #919496;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  white-space: nowrap;
+  text-decoration: none;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.footerBottomLinksWrapper {
+  display: flex;
+}
+
+.footerBottomCopyright {
+  margin: 0 15px 0 auto;
+  font-size: 12px;
+  padding: 1em 0;
+  color: #919496;
+  flex-shrink: 0;
+}
+.footerBottomLinks {
+  margin: 0 45px 0 0;
+  padding: 0 0 0 15px;
+  /* display: flex; */
+  display: block;
+}
+.footerBottomLink {
+  margin-right: 24px;
+  padding: 0;
+  list-style: none;
+  display: inline-block;
+  line-height: normal;
+  letter-spacing: 0;
+}
+.footerBottomLink a {
+  padding: 1em 0;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 10px;
+  text-decoration: none;
+  color: #919496;
+}
+
+@media screen and (max-width: 297px) {
+  .footerBottomLinks {
+    margin: 0 15px 0 0;
+  }
+}
+@media screen and (min-width: 768px) {
+  .footerTopLinks {
+    flex-direction: row;
+  }
+  .footerTopLinkHeaderContainer {
+    flex: 1 0;
+  }
+  .footerNav {
+    width: 750px;
+  }
+  .footerLanguageLink {
+    font-size: 12px;
+  }
+  .footerBottomCopyright {
+    font-size: 12px;
+  }
+  .footerBottomLink a {
+    font-size: 12px;
+  }
+  .footerBottomLinksWrapper {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .footer {
+    padding: 60px 0 50px;
+  }
+  .footerNav {
+    display: -webkit-flex;
+    display: flex;
+    flex-wrap: wrap;
+    width: 970px;
+  }
+  .footerBrand {
+    width: 16.6666667%;
+    flex: 0 0 auto;
+    min-height: 346px;
+    display: block;
+  }
+  .footerTopLinks {
+    width: 50%;
+    flex: 0 0 auto;
+  }
+  .footerTopLink {
+    margin: 20px 0;
+  }
+  .footerSocialLinks {
+    margin: 0 15px 0 auto;
+  }
+  .InstagramIconContainer {
+    width: 54px;
+    height: 54px;
+  }
+  .footerLanguage {
+    width: 100%;
+  }
+  .footerBottomLinks {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .footerNav {
+    width: 1170px;
+  }
+}

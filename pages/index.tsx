@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
+import { Footer } from "../components/Footer/Footer";
+import { Hero } from "../components/Hero/Hero";
+import { Nabar } from "../components/Navbar/Nabar";
 
 const Home: NextPage = () => {
   return (
@@ -11,10 +12,9 @@ const Home: NextPage = () => {
         <meta name="description" content="A redesign of the Spotify web app." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main>This is main content</main>
-
-      <footer>This is footer</footer>
+      <Nabar />
+      <Hero />
+      <Footer />
     </div>
   );
 };

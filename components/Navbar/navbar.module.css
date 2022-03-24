@@ -1,0 +1,11 @@
+.navbarSeperator {
+    background: currentColor;
+    margin: auto 17px;
+    display: inline-block;
+    height: 16px;
+    width: 1px;
+    color: #fff;
+}
+
+
+

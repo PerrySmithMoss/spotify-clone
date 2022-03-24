@@ -1,0 +1,24 @@
+
+@font-face {
+    font-family: 'Heebo-Medium';
+    src: local('Heebo-Medium'),
+      url('../fonts/Heebo/Heebo-Medium.ttf') format('ttf');
+  }
+  
+  @font-face {
+    font-family: 'Heebo-Regular';
+    src: local('Heebo-Regular'),
+      url('../fonts/Heebo/Heebo-Regular.ttf') format('ttf');
+  }
+
+  @font-face {
+    font-family: 'Heebo-Bold';
+    src: local('Heebo-Bold'),
+      url('../fonts/Heebo/Heebo-Bold.ttf') format('ttf');
+  }
+
+  @font-face {
+    font-family: 'Sandwich-Filled';
+    src: local('Sandwich-Filled'),
+      url('../fonts/Sandwich/Sandwich-Filled.ttf') format('ttf');
+  }
