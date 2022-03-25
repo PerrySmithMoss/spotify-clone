@@ -18,7 +18,7 @@ export const Hero: React.FC<HeroProps> = ({}) => {
         </h2>
       </div>
       <div className="mt-5 largePhone:mt-0">
-        <button className="bg-spotify-green text-[#2941AB] uppercase rounded-3xl px-9 py-4 font-bold">
+        <button className="bg-spotify-green text-[#2941AB] uppercase rounded-full px-9 py-4 font-bold">
           Get Spotify Free
         </button>
       </div>

@@ -1,17 +1,18 @@
 import React from "react";
 import Image from "next/image";
-import navbarStyles from "./navbar.module.css"
+import Link from "next/link";
+import navbarStyles from "./navbar.module.css";
 
 interface NabarProps {}
 
 export const Nabar: React.FC<NabarProps> = ({}) => {
   return (
-    <header className="">
-        <div className="mx-auto  max-w-6xl h-20 flex justify-between content-center items-center mt-1">
+    <header className="bg-[#010206]">
+      <div className="mx-auto  max-w-6xl h-20 flex justify-between content-center items-center pt-1">
         <div className=" ">
           <span className="w-full h-full inline-block">
             <svg
-              height="42spx"
+              height="42px"
               width="140px"
               fill="white"
               viewBox="0 0 63 20"
@@ -27,12 +28,30 @@ export const Nabar: React.FC<NabarProps> = ({}) => {
         <nav className="flex">
           <div className="hidden smallLaptop:block">
             <ul className="text-white font-medium flex space-x-9">
-              <li>Premium</li>
-              <li>Support</li>
-              <li>Download</li>
-              <li role="seperator" className={`${navbarStyles.navbarSeperator}`}></li>
-              <li>Sign up</li>
-              <li>Log in</li>
+              <li className="cursor-pointer hover:text-spotify-green">
+                Premium
+              </li>
+              <li className="cursor-pointer hover:text-spotify-green">
+                Support
+              </li>
+              <li className="cursor-pointer hover:text-spotify-green">
+                Download
+              </li>
+              <li
+                role="seperator"
+                className={`${navbarStyles.navbarSeperator}`}
+              ></li>
+              <Link href="/auth/login">
+                <li className="cursor-pointer hover:text-spotify-green">
+                  Sign up
+                </li>
+              </Link>
+
+              <Link href="/auth/login">
+                <li className="cursor-pointer hover:text-spotify-green">
+                  Log in
+                </li>
+              </Link>
             </ul>
           </div>
         </nav>

@@ -17,9 +17,11 @@ module.exports = {
       largePhone: '480px',
       // => @media (min-width: 480px) { ... }
 
-      tablet: '640px',
+      smallTablet: '640px',
       // => @media (min-width: 640px) { ... }
 
+      tablet: '768px',
+      // => @media (min-width: 768px) { ... }
 
       smallLaptop: '912px',
       // => @media (min-width: 1024px) { ... }
@@ -31,5 +33,7 @@ module.exports = {
       // => @media (min-width: 1280px) { ... }
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwind-scrollbar-hide")
+  ],
 }
