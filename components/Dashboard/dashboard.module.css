@@ -1,0 +1,12 @@
+.card {
+    background-color: rgba(255,255,255,.1);
+}
+
+.yourShowsGrid {
+    grid-auto-rows: 0;
+    grid-template-rows: 1fr;
+    overflow-y: hidden;
+    display: grid;
+    grid-gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}

@@ -1,23 +1,14 @@
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
+import { colours } from "../../constants/colors";
 import { useSpotify } from "../../hooks/useSpotify";
+import { milliSecondsToMinutesAndSeconds } from "../../lib/time";
 import { useAppStore } from "../../store/AppStore";
 import { shuffleArrayOfStrings } from "../../utils/shuffleArray";
 import { Songs } from "./Song/Songs";
 
 interface MainProps {}
-
-const colours = [
-  "from-indigo-500",
-  "from-blue-500",
-  "from-green-500",
-  "from-red-500",
-  "from-yellow-500",
-  "from-pink-500",
-  "from-purple-500",
-  "from-orange-500",
-];
 
 export const Main: React.FC<MainProps> = ({}) => {
   const { data: session } = useSession();
@@ -45,7 +36,7 @@ export const Main: React.FC<MainProps> = ({}) => {
     }
   }, [spotifyAPI, selectedPlaylistId]);
 
-  console.log("Selected playlist", selectedPlaylist);
+  // console.log("Selected playlist", selectedPlaylist);
 
   return (
     <div className="flex-grow h-screen overflow-y-scroll scrollbar-hide select-none relative">
@@ -79,18 +70,31 @@ export const Main: React.FC<MainProps> = ({}) => {
           </h1>
           <div className="flex content-center items-center text-sm space-x-1 mt-5">
             <div>
-              <p className="font-bold tracking-wide">Perry Smith-Moss</p>
+              <p className="font-bold tracking-wide">{session?.user.name}</p>
+            </div>
+            <div>•</div>
+            <div>
+              <span className="font-light">
+                {selectedPlaylist.followers.total} likes
+              </span>
+            </div>
+            <div>•</div>
+            <div>
+              <span className="font-light">
+                {selectedPlaylist.tracks.total} songs,
+              </span>
             </div>
             <div>
-            •
-            </div>
-            <div><span className="font-light">1 like</span></div>
-            <div>
-            •
-            </div>
-            <div><span className="font-light">61 songs,</span></div>
-            <div>
-              <span className=" font-medium text-gray-500">4 hr 5 min</span>
+              <span className=" font-medium text-gray-500">
+                {/* {milliSecondsToMinutesAndSeconds(
+                  selectedPlaylist.items.redduce(
+                    (prevSong: any, currentSong: any) =>
+                      prevSong.track.duration_ms +
+                      currentSong.track.duration_ms,
+                    0
+                  )
+                )} */}
+              </span>
             </div>
           </div>
         </div>

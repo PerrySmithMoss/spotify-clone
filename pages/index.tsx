@@ -6,6 +6,7 @@ import { Hero } from "../components/Hero/Hero";
 import { Nabar } from "../components/Navbar/Nabar";
 import { Sidebar } from "../components/Sidebar/Sidebar";
 import { getSession } from "next-auth/react";
+import { Dashboard } from "../components/Dashboard/Dashboard";
 
 const Home: NextPage = () => {
   return (
@@ -17,7 +18,8 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex ">
         <Sidebar />
-        <Main />
+        {/* <Main /> */}
+        <Dashboard />
       </main>
     </div>
   );

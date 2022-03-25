@@ -16,14 +16,14 @@ interface SidebarProps {}
 export const Sidebar: React.FC<SidebarProps> = ({}) => {
   const spotifyAPI = useSpotify();
   const { data: session, status } = useSession();
-  const [playlists, setPlaylists] = useState<any>([]);
+  // const [playlists, setPlaylists] = useState<any>([]);
   const [song, setSong] = useState<any>();
-  const { setSelectedPlaylistId, selectedPlaylistId } = useAppStore();
+  const { setSelectedPlaylistId, selectedPlaylistId, userPlaylists, setUserPlaylists } = useAppStore();
 
   useEffect(() => {
     if (spotifyAPI.getAccessToken()) {
       spotifyAPI.getUserPlaylists().then((data) => {
-        setPlaylists(data.body.items);
+        setUserPlaylists(data.body.items);
       });
     }
   }, [session, spotifyAPI]);
@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
           <hr className="border-t-[0.1px]  border-gray-900" />
 
           {/* Playlists */}
-          {playlists.map((playlist: any) => (
+          {userPlaylists.map((playlist: any) => (
                 <p
                   onClick={() => setSelectedPlaylistId(playlist.id)}
                   key={playlist.id}
