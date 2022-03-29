@@ -1,3 +1,31 @@
 .grid {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+.iconLeft {
+  align-items: center;
+  background-color: rgba(0,0,0,.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  width: 38px;
+  justify-content: center;
+  position: relative;
+}
+
+.iconRight {
+  align-items: center;
+  background-color: rgba(0,0,0,.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  width: 38px;
+  justify-content: center;
+  position: relative;
+}

@@ -1,14 +1,39 @@
 .card {
-    background-color: rgba(255,255,255,.1);
-    opacity: 10;
-    transition: background-color .3s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .yourShowsGrid {
-    grid-auto-rows: 0;
-    grid-template-rows: 1fr;
-    overflow-y: hidden;
-    display: grid;
-    grid-gap: 24px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-auto-rows: 0;
+  grid-template-rows: 1fr;
+  overflow-y: hidden;
+  display: grid;
+  grid-gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.iconLeft {
+    align-items: center;
+    background-color: rgba(0,0,0,.7);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    height: 38px;
+    width: 38px;
+    justify-content: center;
+    position: relative;
+}
+
+.iconRight {
+    align-items: center;
+    background-color: rgba(0,0,0,.7);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    height: 38px;
+    width: 38px;
+    justify-content: center;
+    position: relative;
 }

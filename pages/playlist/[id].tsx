@@ -42,22 +42,22 @@ const IndividualPlaylist: NextPage = () => {
 
 export default IndividualPlaylist;
 
-export const getServerSideProps = async (context: any) => {
-  const { id } = context.query;
-  let playlist;
+// export const getServerSideProps = async (context: any) => {
+//   const { id } = context.query;
+//   let playlist;
 
-  if (typeof id === "string") {
-    spotifyAPI
-      .getPlaylist(id)
-      .then((data) => {
-        playlist = data.body;
-      })
-      .catch((err) => console.log("Something went wrong: ", err));
-  }
+//   if (typeof id === "string") {
+//     spotifyAPI
+//       .getPlaylist(id)
+//       .then((data) => {
+//         playlist = data.body;
+//       })
+//       .catch((err) => console.log("Something went wrong: ", err));
+//   }
 
-  return {
-    props: {
-      session: "Yo",
-    },
-  };
-};
+//   return {
+//     props: {
+//       session: "Yo",
+//     },
+//   };
+// };

@@ -2,6 +2,8 @@ import create from "zustand";
 import { devtools } from "zustand/middleware";
 
 interface State {
+  isProfileDrodownOpen: boolean;
+  setIsProfileDrodownOpen: (prev: boolean) => void;
   userPlaylists: any[];
   setUserPlaylists: (playlists: any[]) => void;
   selectedPlaylistId: string | undefined;
@@ -11,11 +13,14 @@ interface State {
   currentTrackId: string | undefined;
   setCurrentTrackId: (id: string) => void;
   isPlaying: boolean;
-  setIsPlaying: (playlist: boolean) => void;
+  setIsPlaying: (prev: boolean) => void;
 }
 
 export const useAppStore = create<State>(
   devtools((set) => ({
+    isProfileDrodownOpen: false,
+    setIsProfileDrodownOpen: (value) =>
+      set((state) => ({ isProfileDrodownOpen: value })),
     userPlaylists: [],
     setUserPlaylists: (playlist) =>
       set((state) => ({ userPlaylists: playlist })),

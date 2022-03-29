@@ -12,18 +12,22 @@ import { shuffleArrayOfStrings } from "../../utils/shuffleArray";
 import { Songs } from "../Song/Songs";
 import { ClockIcon } from "@heroicons/react/outline";
 import mainStyles from "./main.module.css";
+import { useRouter } from "next/router";
 
 interface MainProps {}
 
 export const Main: React.FC<MainProps> = ({}) => {
   const { data: session } = useSession();
   const spotifyAPI = useSpotify();
+  const router = useRouter();
   const [colour, setColour] = useState<any>(null);
   const {
     setSelectedPlaylistId,
     selectedPlaylistId,
     selectedPlaylist,
     setSelectedPlaylist,
+    isProfileDrodownOpen,
+    setIsProfileDrodownOpen,
   } = useAppStore();
 
   useEffect(() => {
@@ -42,16 +46,37 @@ export const Main: React.FC<MainProps> = ({}) => {
   }, [spotifyAPI, selectedPlaylistId]);
 
   return (
-    <div className="flex-grow h-screen  overflow-y-scroll scrollbar-hide select-none relative">
-      <header className="absolute top-5 right-8">
+    <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+      <header className="flex justify-between mt-6 px-8">
+        <div className="flex space-x-4">
+          <button
+            disabled={router.pathname === "/"}
+            onClick={() => router.back()}
+            className={
+              router.pathname === "/"
+                ? `${mainStyles.iconLeft} cursor-not-allowed`
+                : `${mainStyles.iconLeft}`
+            }
+          >
+            <svg
+              fill="#fff"
+              role="img"
+              height={22}
+              width={22}
+              viewBox="0 0 24 24"
+            >
+              <path d="M15.957 2.793a1 1 0 010 1.414L8.164 12l7.793 7.793a1 1 0 11-1.414 1.414L5.336 12l9.207-9.207a1 1 0 011.414 0z"></path>
+            </svg>
+          </button>
+        </div>
         <div
-          onClick={() => signOut()}
-          className="flex items-center bg-spotify-gray space-x-3 opacity-90 py-1 hover:opacity-80 cursor-pointer rounded-full pr-2"
+          onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
+          className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
           <img
-            className="rounded-full w-8 h-8"
+            className="rounded-full w-8 h-8 text-white"
             src={session?.user?.image}
-            alt="Users Profile Picture"
+            // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
             {session?.user?.name}
@@ -59,9 +84,22 @@ export const Main: React.FC<MainProps> = ({}) => {
           <ChevronDownIcon className="h-5 w-5 text-white" />
         </div>
       </header>
+
+      {isProfileDrodownOpen && (
+        <div
+          className={`h-12 w-52 rounded bg-[#282828] text-white absolute right-8 top-[4.3rem] px-1 flex`}
+        >
+          <div
+            className="flex hover:bg-[#2b2d30] items-center justify-between cursor-pointer px-3 w-full"
+            onClick={() => signOut()}
+          >
+            <p className="hover:bg-[#2b2d30] text-sm font-light">Log out</p>
+          </div>
+        </div>
+      )}
       {selectedPlaylist && (
         <section
-          className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[340px] text-white pl-7 pb-5`}
+          className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
         >
           <img
             className="w-56 h-56 shadow-2xl"
