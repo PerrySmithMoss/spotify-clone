@@ -6,3 +6,11 @@ export function milliSecondsToMinutesAndSeconds(milliseconds: number) {
     ? minutes + 1 + ":00"
     : minutes + ":" + (parseInt(seconds) < 10 ? "0" : "") + seconds;
 }
+
+export function milliSecondsToHours(milliseconds: number) {
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  return hours;
+}

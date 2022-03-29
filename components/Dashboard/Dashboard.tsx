@@ -17,10 +17,11 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
   const [usersTopArtists, setUsersTopArtists] = useState<object[]>([]);
   const [usersTopSongs, setUsersTopSongs] = useState<object[]>([]);
   const [usersSavedShows, setUsersSavedShows] = useState<object[]>([]);
+  const { selectedPlaylistId } = useAppStore();
 
   useEffect(() => {
     setColour(shuffleArrayOfStrings(colours).pop());
-  }, []);
+  }, [selectedPlaylistId]);
 
   useEffect(() => {
     if (spotifyAPI.getAccessToken()) {
@@ -29,7 +30,6 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
       });
     }
   }, [spotifyAPI]);
-
 
   useEffect(() => {
     if (spotifyAPI.getAccessToken()) {
@@ -43,18 +43,16 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
     if (spotifyAPI.getAccessToken()) {
       spotifyAPI.getMySavedShows().then((data) => {
         setUsersSavedShows(data.body.items);
-        console.log(data.body.items);
       });
     }
   }, [spotifyAPI]);
 
-
   return (
-    <div className="flex-grow   h-screen overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="flex-grow bg-spotify-gray  h-screen overflow-y-scroll scrollbar-hide select-none relative">
       <header className="absolute top-5 right-8">
         <div
           onClick={() => signOut()}
-          className="flex items-center  bg-spotify-black space-x-2 opacity-90 hover:opacity-80 cursor-pointer rounded-full pr-2"
+          className="flex items-center  bg-spotify-gray space-x-2 opacity-90 hover:opacity-80 cursor-pointer rounded-full pr-2"
         >
           <img
             className="rounded-full w-9 h-9 p-1"
@@ -66,24 +64,27 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
         </div>
       </header>
       <section
-        className={`px-10  bg-gradient-to-b to-spotify-black ${colour}  h-40 text-white pb-5 border-spotify-black border-[.5px]`}
+        className={`px-10 bg-gradient-to-b to-spotify-gray ${colour}  h-40 text-white pb-5 border-spotify-black `}
       >
-        <h1 className="mt-24 text-white text-xl tablet:text-2xl desktop:text-3xl font-bold">
+        <h1 className="mt-24 text-white text-xl md:text-2xl lg:text-3xl font-bold">
           Good afternoon
         </h1>
-        <div className="grid grid-cols-3 gap-x-8 gap-y-4 mt-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 mt-8">
           {userPlaylists.map((playlist: any) => (
-            <div className={`${dashboardStyles.card} bg-gray-800 rounded`}>
+            <div
+              key={playlist.id}
+              className={`${dashboardStyles.card} rounded`}
+            >
               <div className="flex content-center items-center w-full">
-                <div>
+                <div className="h-24 w-28 pr-4">
                   <img
-                    className="h-24 w-24 rounded-l"
+                    className="h-full w-full rounded-l"
                     src={playlist.images[0].url}
                     alt={playlist.name}
                   />
                 </div>
-                <div className="px-5 truncate">
-                  <p>{playlist.name}</p>
+                <div className="truncate">
+                  <p className="truncate">{playlist.name}</p>
                 </div>
               </div>
             </div>
@@ -91,7 +92,7 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
         </div>
         <div className="mt-12 flex justify-between items-center content-center">
           <div>
-            <h1 className="text-white text-xl tablet:text-2xl desktop:text-2xl font-bold">
+            <h1 className="text-white text-xl md:text-2xl lg:text-2xl font-bold">
               Your top artists
             </h1>
           </div>
@@ -105,23 +106,23 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           className={`mt-8 grid grid-flow-col auto-cols-max auto-rows-max gap-8 overflow-y-hidden scrollbar-hide`}
         >
           {usersTopArtists.map((artist: any) => (
-            <div>
+            <div key={artist.id}>
               <div>
                 <img
-                  className="rounded-sm h-48 w-48 "
+                  className="rounded-sm h-52 w-52 "
                   src={artist.images[0].url}
                   alt={artist.name}
                 />
               </div>
               <div className="w-40 mt-1.5">
                 <p className="truncate">{artist.name}</p>
-                </div>
+              </div>
             </div>
           ))}
         </div>
         <div className="mt-12 flex justify-between items-center content-center">
           <div>
-            <h1 className="text-white text-xl tablet:text-2xl desktop:text-2xl font-bold">
+            <h1 className="text-white text-xl md:text-2xl lg:text-2xl font-bold">
               Your top tracks
             </h1>
           </div>
@@ -135,23 +136,23 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           className={`mt-8 grid grid-flow-col auto-cols-max auto-rows-max gap-8 overflow-y-hidden scrollbar-hide`}
         >
           {usersTopSongs.map((song: any) => (
-            <div>
+            <div key={song.id}>
               <div>
                 <img
-                  className="rounded-sm h-48 w-48 "
+                  className="rounded-sm h-52 w-52 "
                   src={song.album.images[0].url}
                   alt={song.name}
                 />
               </div>
               <div className="w-40 mt-1.5">
                 <p className="truncate">{song.name}</p>
-                </div>
+              </div>
             </div>
           ))}
         </div>
         <div className="mt-12 flex justify-between items-center content-center">
           <div>
-            <h1 className="text-white text-xl tablet:text-2xl desktop:text-2xl font-bold">
+            <h1 className="text-white text-xl md:text-2xl lg:text-2xl font-bold">
               Your top shows
             </h1>
           </div>
@@ -165,17 +166,17 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           className={`mt-8 pb-12 grid grid-flow-col auto-cols-max auto-rows-max gap-8 overflow-y-hidden scrollbar-hide`}
         >
           {usersSavedShows.map((show: any) => (
-            <div>
+            <div key={show.show.id}>
               <div>
                 <img
-                  className="rounded-sm h-48 w-48 "
+                  className="rounded-sm h-52 w-52 "
                   src={show.show.images[0].url}
                   alt={show.show.name}
                 />
               </div>
               <div className="w-40 mt-1.5">
                 <p className="truncate">{show.show.name}</p>
-                </div>
+              </div>
             </div>
           ))}
         </div>

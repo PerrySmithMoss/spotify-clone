@@ -1,14 +1,14 @@
 import type { NextPage } from "next";
 import { Main } from "../components/Main/Main";
 import Head from "next/head";
-import { Footer } from "../components/Footer/Footer";
-import { Hero } from "../components/Hero/Hero";
-import { Nabar } from "../components/Navbar/Nabar";
+import { Player } from "../components/Player/Player";
 import { Sidebar } from "../components/Sidebar/Sidebar";
 import { getSession } from "next-auth/react";
 import { Dashboard } from "../components/Dashboard/Dashboard";
+import { useAppStore } from "../store/AppStore";
 
 const Home: NextPage = () => {
+  const { selectedPlaylistId } = useAppStore();
   return (
     <div className="bg-spotify-black h-screen overflow-hidden">
       <Head>
@@ -18,9 +18,16 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex ">
         <Sidebar />
-        {/* <Main /> */}
-        <Dashboard />
+        {selectedPlaylistId && selectedPlaylistId !== undefined ? (
+          <Main />
+        ) : (
+          <Dashboard />
+        )}
       </main>
+
+      <div className="sticky bottom-0">
+        <Player />
+      </div>
     </div>
   );
 };

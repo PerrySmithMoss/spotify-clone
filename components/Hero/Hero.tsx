@@ -17,7 +17,7 @@ export const Hero: React.FC<HeroProps> = ({}) => {
           Millions of songs and podcasts. No credit card needed.
         </h2>
       </div>
-      <div className="mt-5 largePhone:mt-0">
+      <div className="mt-5 xs:mt-0">
         <button className="bg-spotify-green text-[#2941AB] uppercase rounded-full px-9 py-4 font-bold">
           Get Spotify Free
         </button>

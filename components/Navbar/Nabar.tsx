@@ -26,7 +26,7 @@ export const Nabar: React.FC<NabarProps> = ({}) => {
           </span>
         </div>
         <nav className="flex">
-          <div className="hidden smallLaptop:block">
+          <div className="hidden largeTablet:block">
             <ul className="text-white font-medium flex space-x-9">
               <li className="cursor-pointer hover:text-spotify-green">
                 Premium
