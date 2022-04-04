@@ -9,7 +9,6 @@ import { useAppStore } from "../store/AppStore";
 import { SearchContainer } from "../components/Search/SearchContainer";
 
 const Search: NextPage = () => {
-  const { selectedPlaylistId } = useAppStore();
   return (
     <div className="bg-spotify-black h-screen overflow-hidden">
       <Head>

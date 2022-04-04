@@ -111,7 +111,7 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
         </div>
       )}
       <section
-        className={`px-10 bg-gradient-to-b to-spotify-gray ${colour}  h-40 text-white pb-5 border-spotify-black `}
+        className={`px-10 bg-gradient-to-b to-spotify-gray ${colour}  h-40 text-white border-spotify-black `}
       >
         <h1 className="mt-10 text-white text-xl md:text-2xl lg:text-3xl font-bold">
           Good afternoon
@@ -213,7 +213,7 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           </div>
         </div>
         <div
-          className={`mt-8 pb-12 grid grid-flow-col auto-cols-max auto-rows-max gap-8 overflow-y-hidden scrollbar-hide`}
+          className={`mt-8 pb-28 grid grid-flow-col auto-cols-max auto-rows-max gap-8 overflow-y-hidden scrollbar-hide`}
         >
           {usersSavedShows.map((show: any) => (
             <div key={show.show.id}>

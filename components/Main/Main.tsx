@@ -6,7 +6,7 @@ import { useSpotify } from "../../hooks/useSpotify";
 import {
   milliSecondsToHours,
   milliSecondsToMinutesAndSeconds,
-} from "../../lib/time";
+} from "../../utils/time";
 import { useAppStore } from "../../store/AppStore";
 import { shuffleArrayOfStrings } from "../../utils/shuffleArray";
 import { Songs } from "../Song/Songs";

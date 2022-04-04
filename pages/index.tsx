@@ -19,11 +19,6 @@ const Home: NextPage = () => {
       <main className="flex ">
         <Sidebar />
         <Dashboard />
-        {/* {selectedPlaylistId && selectedPlaylistId !== undefined ? (
-          <Main />
-        ) : (
-          <Dashboard />
-        )} */}
       </main>
 
       <div className="sticky bottom-0">

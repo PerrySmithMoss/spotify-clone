@@ -16,7 +16,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState<any>([]);
+  const [searchResults, setSearchResults] = useState<object>({});
   const spotifyAPI = useSpotify();
   const {
     selectedPlaylistId,
@@ -28,20 +28,26 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   const fetchSongs: (search: string) => void = useCallback(
     debounce(async (string: string) => {
       spotifyAPI
-        .searchTracks(string, { limit: 5, market: "GB" })
+        .search(string, ["track", "playlist", "show", "album", "artist"], {
+          limit: 5,
+          offset: 0,
+        })
         .then((res: any) => {
+          console.log("Search results: ", res.body)
           setSearchResults(
-            res.body.tracks.items.map((track: any) => {
-              return {
-                id: track.id,
-                artist: track.artists[0],
-                title: track.name,
-                uri: track.uri,
-                albumUrl: track.album.images[0].url,
-                popularity: track.popularity,
-                previewUrl: track.preview_url,
-              };
-            })
+            res.body
+            // .tracks.items.map((track: any) => {
+            //   return {
+            //     id: track.id,
+            //     artist: track.artists[0],
+            //     title: track.name,
+            //     uri: track.uri,
+            //     albumUrl: track.album.images[0].url,
+            //     popularity: track.popularity,
+            //     previewUrl: track.preview_url,
+            //   };
+            // }
+            // )
           );
         })
         .catch((error: any) => {
@@ -138,11 +144,13 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
         className={`px-10 mt-6 bg-gradient-to-b to-spotify-gray  h-40 text-white pb-5 border-spotify-black `}
       >
         <div className="mt-10">
-          {!Array.isArray(searchResults) ||
-            (!searchResults.length && <SearchResults />)}
-        </div>
-        <div className="mt-10">
-          <YourTopGenres />
+          {Object.keys(searchResults as object).length > 0 ? (
+            <SearchResults searchResults={searchResults} />
+          ) : (
+            <div className="mt-10">
+            <YourTopGenres />
+          </div>
+          )}
         </div>
         {/* <div className="mt-12 flex justify-between items-center content-center">
           <div>

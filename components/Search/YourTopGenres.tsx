@@ -16,6 +16,7 @@ export const YourTopGenres: React.FC<YourTopGenresProps> = ({}) => {
         >
           {genres.map((genre: any) => (
             <a
+            key={genre.id}
               className={searchStyles.genreContainer}
               style={{ backgroundColor: genre.colour }}
             >

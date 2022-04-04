@@ -41,7 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
   };
 
   return (
-    <aside>
+    <aside className="hidden md:block">
       <div className="flex  justify-center w-full px-5 pt-5 pb-2 mt-2">
         <span className="w-full h-full flex ">
           <Link href="/">

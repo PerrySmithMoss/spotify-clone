@@ -1,6 +1,6 @@
 import React from "react";
 import { useSpotify } from "../../hooks/useSpotify";
-import { milliSecondsToMinutesAndSeconds } from "../../lib/time";
+import { milliSecondsToMinutesAndSeconds } from "../../utils/time";
 import { useAppStore } from "../../store/AppStore";
 
 interface SongProps {
@@ -24,7 +24,7 @@ export const Song: React.FC<SongProps> = ({ song, order }) => {
   return (
     <div
       onClick={playSong}
-      className="grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-spotify-black rounded-md mt-5 cursor-pointer"
+      className="grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-gray-600 rounded-md mt-1 cursor-pointer"
     >
       <div className="flex items-center pl-3 space-x-4 py-1 w-full">
         <p>{order + 1}</p>
