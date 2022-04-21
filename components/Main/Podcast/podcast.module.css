@@ -1,0 +1,72 @@
+.searchPlayButtton {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -140%);
+}
+
+.searchSongIndividual:hover * .searchPlayButtton {
+  display: block;
+}
+
+.grid {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.border {
+  border-color: rgba(255,255,255,.1);
+}
+
+.explict {
+  align-items: center;
+  background-color: rgba(255,255,255,.6);
+  border-radius: 2px;
+  color: #121212;
+  display: inline-flex;
+  font-size: 9px;
+  height: 16px;
+  justify-content: center;
+  line-height: 10px;
+  padding: 3px 5px;
+  text-transform: uppercase;
+  
+}
+
+.iconLeft {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  width: 38px;
+  justify-content: center;
+  position: relative;
+}
+
+.iconRight {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  width: 38px;
+  justify-content: center;
+  position: relative;
+}
+
+.searchPlayButtton {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -140%);
+}
+
+.searchSongIndividual:hover * .searchPlayButtton {
+  display: block;
+}

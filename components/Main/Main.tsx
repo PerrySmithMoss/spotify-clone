@@ -44,7 +44,6 @@ export const Main: React.FC<MainProps> = ({}) => {
         .catch((err) => console.log("Something went wrong: ", err));
     }
   }, [spotifyAPI, selectedPlaylistId]);
-
   return (
     <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">

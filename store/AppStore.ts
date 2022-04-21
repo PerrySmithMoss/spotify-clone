@@ -12,6 +12,18 @@ interface State {
   setSelectedPlaylist: (playlist: any) => void;
   currentTrackId: string | undefined;
   setCurrentTrackId: (id: string) => void;
+  selectedArtistId: string | undefined;
+  setSelectedArtistId: (id: string) => void;
+  selectedAlbumId: string | undefined;
+  setSelectedAlbumId: (id: string) => void;
+  selectedPodcastId: string | undefined;
+  setSelectedPodcastId: (id: string) => void;
+  selectedPodcast: any;
+  setSelectedPodcast: (podcast: any) => void;
+  selectedArtist: any;
+  setSelectedArtist: (artist: any) => void;
+  selectedAlbum: any;
+  setSelectedAlbum: (album: any) => void;
   isPlaying: boolean;
   setIsPlaying: (prev: boolean) => void;
 }
@@ -31,6 +43,19 @@ export const useAppStore = create<State>(
       set((state) => ({ selectedPlaylist: playlist })),
     currentTrackId: undefined,
     setCurrentTrackId: (id) => set((state) => ({ currentTrackId: id })),
+    selectedArtistId: undefined,
+    setSelectedArtistId: (id) => set((state) => ({ selectedArtistId: id })),
+    selectedArtist: undefined,
+    setSelectedArtist: (artist) => set((state) => ({ selectedArtist: artist })),
+    selectedAlbumId: undefined,
+    setSelectedAlbumId: (id) => set((state) => ({ selectedAlbumId: id })),
+    selectedPodcastId: undefined,
+    setSelectedPodcastId: (id) => set((state) => ({ selectedPodcastId: id })),
+    selectedPodcast: undefined,
+    setSelectedPodcast: (podcast) =>
+      set((state) => ({ selectedPodcast: podcast })),
+    selectedAlbum: undefined,
+    setSelectedAlbum: (album) => set((state) => ({ selectedAlbum: album })),
     isPlaying: false,
     setIsPlaying: (value) => set((state) => ({ isPlaying: value })),
   }))

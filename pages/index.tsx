@@ -5,10 +5,8 @@ import { Player } from "../components/Player/Player";
 import { Sidebar } from "../components/Sidebar/Sidebar";
 import { getSession } from "next-auth/react";
 import { Dashboard } from "../components/Dashboard/Dashboard";
-import { useAppStore } from "../store/AppStore";
 
 const Home: NextPage = () => {
-  const { selectedPlaylistId } = useAppStore();
   return (
     <div className="bg-spotify-black h-screen overflow-hidden">
       <Head>

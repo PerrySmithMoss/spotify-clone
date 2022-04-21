@@ -4,12 +4,13 @@ import Head from "next/head";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { useAppStore } from "../../store/AppStore";
 import { useEffect } from "react";
-import { spotifyAPI } from "../../lib/spotify";
 import { Player } from "../../components/Player/Player";
+import { useSpotify } from "../../hooks/useSpotify";
 
 const IndividualPlaylist: NextPage = () => {
   const { selectedPlaylist, setSelectedPlaylist, selectedPlaylistId } =
     useAppStore();
+    const spotifyAPI = useSpotify();
 
   useEffect(() => {
     if (typeof selectedPlaylistId === "string") {

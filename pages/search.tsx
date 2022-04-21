@@ -10,16 +10,15 @@ import { SearchContainer } from "../components/Search/SearchContainer";
 
 const Search: NextPage = () => {
   return (
-    <div className="bg-spotify-black h-screen overflow-hidden">
+    <div className="bg-spotify-gray h-screen overflow-hidden ">
       <Head>
         <title>Spotify - Search</title>
         <meta name="description" content="Search Spotify to find the music you love." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex ">
+      <main className="flex">
         <Sidebar />
         <SearchContainer />
-
       </main>
 
       <div className="sticky bottom-0">

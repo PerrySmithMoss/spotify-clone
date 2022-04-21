@@ -44,6 +44,7 @@ export default NextAuth({
     async jwt({ token, account, user }) {
       if (account && user) {
         return {
+          user: user,
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
           username: account.providerAccountId,
@@ -64,6 +65,10 @@ export default NextAuth({
       session.user.accessToken = token.accessToken as string;
       session.user.refreshToken = token.refreshToken as string;
       session.user.username = token.username as string;
+      session.user.id = (token as any).user.name;
+      session.user.name = (token as any).user.name as string;
+      session.user.image = (token as any).user.image as string;
+      session.user.email = (token as any).user.email as string;
 
       return session;
     },

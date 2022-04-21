@@ -1,0 +1,10 @@
+.searchPlayButtton {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -140%);
+}
+
+.searchSongIndividual:hover * .searchPlayButtton {
+  display: block;
+}

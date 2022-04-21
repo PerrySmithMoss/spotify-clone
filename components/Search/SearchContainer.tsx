@@ -19,8 +19,6 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   const [searchResults, setSearchResults] = useState<object>({});
   const spotifyAPI = useSpotify();
   const {
-    selectedPlaylistId,
-    setSelectedPlaylistId,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
   } = useAppStore();
@@ -33,7 +31,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
           offset: 0,
         })
         .then((res: any) => {
-          console.log("Search results: ", res.body)
+          // console.log("Search results: ", res.body)
           setSearchResults(
             res.body
             // .tracks.items.map((track: any) => {

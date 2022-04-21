@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useAppStore } from "../../store/AppStore";
 import { milliSecondsToMinutesAndSeconds } from "../../utils/time";
+import searchStyles from "./search.module.css";
 
 interface SearchResultsProps {
   searchResults: any;
@@ -14,8 +15,16 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 }) => {
   const [artistInfo, setArtistInfo] = useState<any>({});
   const spotifyAPI = useSpotify();
-  const { setSelectedPlaylistId } = useAppStore();
+  const {
+    setSelectedPlaylistId,
+    setSelectedArtistId,
+    setSelectedAlbumId,
+    setSelectedPodcastId,
+  } = useAppStore();
   const router = useRouter();
+  const spotifyApi = useSpotify();
+  const { setCurrentTrackId, setIsPlaying } = useAppStore();
+
   const getArtist = (id: string) => {
     spotifyAPI
       .getArtist(id)
@@ -28,9 +37,36 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       });
   };
 
+  const playSong = (song: any) => {
+    setCurrentTrackId(song.id);
+    setIsPlaying(true);
+    spotifyApi
+      .play({
+        uris: [song.uri],
+      })
+      .catch((err) => {
+        console.log("There was an error while trying to play song: ", err);
+      });
+  };
+
   const handleSelectPlaylist = (id: string) => {
     setSelectedPlaylistId(id);
     router.push(`/playlist/${id}`);
+  };
+
+  const handleSelectArtist = (id: string) => {
+    setSelectedArtistId(id);
+    router.push(`/artist/${id}`);
+  };
+
+  const handleSelectAlbum = (id: string) => {
+    setSelectedAlbumId(id);
+    router.push(`/album/${id}`);
+  };
+
+  const handleSelectPodcast = (id: string) => {
+    setSelectedPodcastId(id);
+    router.push(`/podcast/${id}`);
   };
 
   useEffect(() => {
@@ -40,10 +76,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
   return (
     <div>
-      <section className="grid grid-cols-2 gap-4">
+      <section className="grid grid-cols-2 gap-4 max-w-[1080px]">
         <div>
           <h2 className="text-2xl font-bold">Top result</h2>
-          <div className="mt-10 ml-2">
+          <div className="pt-8 pl-6 pb-6 rounded mt-7 bg-[#181818]">
             <img
               className=" rounded-[50%] h-28 w-28"
               src={
@@ -65,29 +101,43 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               </div>
 
               <div>
-                <a className="uppercase text-xs text-[#b3b3b3] tracking-wider">
+                <button className="uppercase text-xs text-[#b3b3b3] tracking-wider">
                   See all
-                </a>
+                </button>
               </div>
             </div>
           </div>
-          <div className="mt-8">
+          <div className="mt-9">
             {searchResults.tracks.items.slice(0, 4).map((song: any) => (
               <div
+                onClick={() => playSong(song)}
                 key={song.id}
-                className="flex w-full text-[#b3b3b3] hover:text-white hover:bg-gray-600 rounded-sm  cursor-pointer"
+                className={`${searchStyles.searchSongIndividual} group flex w-full group text-[#b3b3b3] hover:text-white hover:bg-gray-600 rounded-sm  cursor-pointer`}
               >
-                <div className="flex py-1.5 w-full">
-                  <div className="ml-2">
+                <div className="flex py-1.5 pr-1.5 w-full">
+                  <div className="ml-2 relative">
                     <img
-                      className="w-11 rounded-sm h-auto"
+                      className="w-11 group-hover:opacity-30 rounded-sm h-auto"
                       src={song?.album?.images[0]?.url}
                       alt={song?.album?.name}
                     />
+                    <div className={`${searchStyles.searchPlayButtton} `}>
+                      <svg
+                        height={22}
+                        width={22}
+                        viewBox="0 0 24 24"
+                        fill="white"
+                      >
+                        <polygon
+                          fill="white"
+                          points="21.57 12 5.98 3 5.98 21 21.57 12"
+                        ></polygon>
+                      </svg>
+                    </div>
                   </div>
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between content-center items-center w-full">
                     <div className="flex flex-col ml-3.5 ">
-                      <p className="text-white">{song.album.name}</p>
+                      <p className="text-white">{song.name}</p>
                       <p>{song.artists[0].name}</p>
                     </div>
                     <div>
@@ -102,16 +152,19 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       </section>
       <section className="mt-10">
         <h2 className="text-2xl font-bold">Artists</h2>
-        <div className="grid grid-cols-5 gap-4 mt-6">
+        <div
+          className={`mt-6 grid grid-flow-col auto-cols-max auto-rows-max gap-4 overflow-y-hidden scrollbar-hide`}
+        >
           {Object.keys(searchResults as object).length > 0 &&
             searchResults?.artists.items.map((artist: any) => (
               <div
                 key={artist.id}
+                onClick={() => handleSelectArtist(artist.id)}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
                 <img
                   className="rounded-full h-[190px] w-full p-2"
-                  src={artist.images[0].url}
+                  src={artist?.images[0]?.url}
                   alt="Artist profile picture"
                 />
 
@@ -129,10 +182,13 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       </section>
       <section className="mt-10">
         <h2 className="text-2xl font-bold">Albums</h2>
-        <div className="grid grid-cols-5 gap-4 mt-6">
+        <div
+          className={`mt-6 grid grid-flow-col auto-cols-max auto-rows-max gap-4 overflow-y-hidden scrollbar-hide`}
+        >
           {Object.keys(searchResults as object).length > 0 &&
             searchResults?.albums.items.map((album: any) => (
               <div
+                onClick={() => handleSelectAlbum(album.id)}
                 key={album.id}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
@@ -156,7 +212,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       </section>
       <section className="mt-10">
         <h2 className="text-2xl font-bold">Playlists</h2>
-        <div className="grid grid-cols-5 gap-4 mt-6">
+        <div
+          className={`mt-6 grid grid-flow-col auto-cols-max auto-rows-max gap-4 overflow-y-hidden scrollbar-hide`}
+        >
           {Object.keys(searchResults as object).length > 0 &&
             searchResults?.playlists.items.map((playlist: any) => (
               <div
@@ -184,11 +242,14 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       </section>
       <section className="mt-10 pb-28">
         <h2 className="text-2xl font-bold">Podcasts</h2>
-        <div className="grid grid-cols-5 gap-4 mt-6">
+        <div
+          className={`mt-6 grid grid-flow-col auto-cols-max auto-rows-max gap-4 overflow-y-hidden scrollbar-hide`}
+        >
           {Object.keys(searchResults as object).length > 0 &&
             searchResults?.shows.items.map((podcast: any) => (
               <div
                 key={podcast.id}
+                onClick={() => handleSelectPodcast(podcast.id)}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
                 <img
