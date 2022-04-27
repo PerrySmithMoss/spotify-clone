@@ -11,11 +11,13 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { useAppStore } from "../../store/AppStore";
 import { useSpotify } from "../../hooks/useSpotify";
+import { useRouter } from "next/router";
 
 interface SidebarProps {}
 
 export const Sidebar: React.FC<SidebarProps> = ({}) => {
   const spotifyAPI = useSpotify();
+  const router = useRouter();
   const { data: session, status } = useSession();
   // const [playlists, setPlaylists] = useState<any>([]);
   const [song, setSong] = useState<any>();
@@ -64,27 +66,50 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
       <div className="text-gray-500 p-5 mt-1 text-sm border-r border-black overflow-y-scroll h-screen scrollbar-hide sm:w-[12rem] lg:w-[15rem] hidden md:inline-flex ">
         <div className="space-y-4 w-full">
           <Link href={`/`}>
-            <button className="flex items-center space-x-2 hover:text-white">
+            <button
+              className={
+                router.pathname === "/"
+                  ? `flex items-center space-x-2 text-white`
+                  : `flex items-center space-x-2 hover:text-white`
+              }
+            >
               <HomeIcon className="h-7 w-7" />
               <p>Home</p>
             </button>
           </Link>
           <Link href="/search">
-            <button className="flex items-center space-x-2 hover:text-white">
+            <button
+              className={
+                router.pathname === "/search"
+                  ? `flex items-center space-x-2 text-white`
+                  : `flex items-center space-x-2 hover:text-white`
+              }
+            >
               <SearchIcon className="h-7 w-7" />
               <p>Search</p>
             </button>
           </Link>
-          <button className="flex items-center  space-x-2 hover:text-white">
-            <LibraryIcon className="h-7 w-7" />
-            <p>Your Library</p>
-          </button>
+          <Link href={`/collections/playlists`}>
+            <button
+              className={
+                router.asPath === "/collections/playlists" ||
+                router.asPath === "/collections/podcasts" ||
+                router.asPath === "/collections/artists" ||
+                router.asPath === "/collections/albums"
+                  ? `flex items-center space-x-2 text-white`
+                  : `flex items-center space-x-2 hover:text-white`
+              }
+            >
+              <LibraryIcon className="h-7 w-7" />
+              <p>Your Library</p>
+            </button>
+          </Link>
 
-          <button className="flex items-center pt-4 space-x-2 hover:text-white">
+          {/* <button className="flex items-center pt-4 space-x-2 hover:text-white">
             <PlusCircleIcon className="h-7 w-7" />
             <p>Create Playlist</p>
-          </button>
-          <button className="flex items-center space-x-2 hover:text-white">
+          </button> */}
+          <button className="flex items-center pt-4 space-x-2 hover:text-white">
             <HeartIcon className="h-7 w-7" />
             <p>Liked songs</p>
           </button>

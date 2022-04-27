@@ -26,6 +26,10 @@ interface State {
   setSelectedAlbum: (album: any) => void;
   isPlaying: boolean;
   setIsPlaying: (prev: boolean) => void;
+  libraryCollectionSelected: "playlists" | "podcasts" | "artists" | "albums";
+  setLibraryCollectionSelected: (
+    prev: "playlists" | "podcasts" | "artists" | "albums"
+  ) => void;
 }
 
 export const useAppStore = create<State>(
@@ -58,5 +62,8 @@ export const useAppStore = create<State>(
     setSelectedAlbum: (album) => set((state) => ({ selectedAlbum: album })),
     isPlaying: false,
     setIsPlaying: (value) => set((state) => ({ isPlaying: value })),
+    libraryCollectionSelected: "playlists",
+    setLibraryCollectionSelected: (value) =>
+      set((state) => ({ libraryCollectionSelected: value })),
   }))
 );

@@ -1,0 +1,120 @@
+.grid {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.iconLeft {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  width: 38px;
+  justify-content: center;
+  position: relative;
+}
+
+.iconRight {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 38px;
+  width: 38px;
+  justify-content: center;
+  position: relative;
+}
+
+.topTracksGrid {
+  --column-count: 4;
+  column-width: 228px;
+  column-count: 4;
+  grid-gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(var(--column-count), minmax(0, 1fr));
+}
+
+.likedSongsBox {
+  color: #fff;
+  font-size: 16px;
+  grid-column: span 2;
+  height: inherit;
+  line-height: 24px;
+  background: linear-gradient(149.46deg, #450af5, #8e8ee5 99.16%);
+}
+
+.likedSongs {
+  --card-container-border-radius: clamp(
+    4px,
+    (var(--column-width, 0px) - 32px) * 0.025,
+    8px
+  );
+  -webkit-box-flex: 1;
+  border-radius: calc(var(--card-container-border-radius) + 2px);
+  flex: 1;
+  isolation: isolate;
+  padding: 20px;
+  position: relative;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.playlist {
+  --card-container-border-radius: clamp(
+    4px,
+    (var(--column-width, 0px) - 32px) * 0.025,
+    8px
+  );
+  -webkit-box-flex: 1;
+  border-radius: calc(var(--card-container-border-radius) + 2px);
+  flex: 1;
+  isolation: isolate;
+  background: #181818;
+  padding: 16px;
+  position: relative;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.trackName {
+  opacity: 0.7;
+}
+
+.trackName::after {
+  content: " ";
+}
+
+.trackName::before {
+  content: " ";
+}
+
+.playlistImage {
+  --card-image-border-radius: clamp(
+    4px,
+    (var(--column-width, 0px) - 32px) * 0.025,
+    8px
+  );
+  background-color: #333;
+  border-radius: var(--card-image-border-radius);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
+  padding-bottom: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.cardImage {
+  --card-image-border-radius: clamp(
+    4px,
+    (var(--column-width, 0px) - 32px) * 0.025,
+    8px
+  );
+  border-radius: var(--card-image-border-radius);
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+}

@@ -112,7 +112,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               <div
                 onClick={() => playSong(song)}
                 key={song.id}
-                className={`${searchStyles.searchSongIndividual} group flex w-full group text-[#b3b3b3] hover:text-white hover:bg-gray-600 rounded-sm  cursor-pointer`}
+                className={`${searchStyles.searchSongIndividual} group flex w-full group text-[#b3b3b3] hover:text-white hover:bg-[#282828] rounded-sm  cursor-pointer`}
               >
                 <div className="flex py-1.5 pr-1.5 w-full">
                   <div className="ml-2 relative">

@@ -37,7 +37,7 @@ export const PodcastEpisode: React.FC<PodcastEpisodeProps> = ({ episode }) => {
       <hr className={`${podcastStyles.border} mt-4 mb-4`} />
       <div
         onClick={playEpisode}
-        className={`text-[#b3b3b3] hover:text-white  hover:bg-gray-600 rounded-md mt-1 cursor-pointer`}
+        className={`text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
       >
         <div className="flex items-center space-x-4 p-1 w-full">
           <img

@@ -25,7 +25,7 @@ export const ArtistsTopTracks: React.FC<SongProps> = ({ song, order }) => {
   return (
     <div
       onClick={playSong}
-      className={`${artistStyles.searchSongIndividual} group grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-gray-600 rounded-md mt-1 cursor-pointer`}
+      className={`${artistStyles.searchSongIndividual} group grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
     >
       <div className="flex items-center pl-3 space-x-4 py-1 w-full">
         <p>{order + 1}</p>

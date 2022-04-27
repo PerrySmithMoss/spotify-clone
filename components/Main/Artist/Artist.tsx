@@ -209,7 +209,7 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
               {artistsAlbums &&
                 artistsAlbums?.map((album: any) => (
                   <div
-                  className=" cursor-pointer hover:bg-gray-600 p-3"
+                  className=" cursor-pointer hover:bg-[#282828] p-3"
                   key={album.id}
                   onClick={() => handleSelectAlbum(album.id)}
                   >
@@ -238,7 +238,7 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
                 relatedArtists?.slice(0, 10).map((relatedArtist: any) => (
                   <div
                     onClick={() => handleSelectArtist(relatedArtist.id)}
-                    className=" cursor-pointer hover:bg-gray-600 p-3"
+                    className=" cursor-pointer hover:bg-[#282828] p-3"
                     key={relatedArtist.id}
                   >
                     <div>
