@@ -12,6 +12,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useAppStore } from "../../store/AppStore";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useRouter } from "next/router";
+import sidebarStyles from "./sidebar.module.css";
 
 interface SidebarProps {}
 
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
     userPlaylists,
     selectedPlaylist,
     setSelectedPlaylist,
+    setLibraryCollectionSelected,
     setUserPlaylists,
   } = useAppStore();
 
@@ -40,6 +42,11 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
 
   const handleSelectPlaylist = (id: string) => {
     setSelectedPlaylistId(id);
+  };
+
+  const handleSelectLikedSongs = () => {
+    setLibraryCollectionSelected("tracks");
+    router.push("/collections/tracks");
   };
 
   return (
@@ -64,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
         </span>
       </div>
       <div className="text-gray-500 p-5 mt-1 text-sm border-r border-black overflow-y-scroll h-screen scrollbar-hide sm:w-[12rem] lg:w-[15rem] hidden md:inline-flex ">
-        <div className="space-y-4 w-full">
+        <div className="space-y-4 w-full ml-0">
           <Link href={`/`}>
             <button
               className={
@@ -73,7 +80,15 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
                   : `flex items-center space-x-2 hover:text-white`
               }
             >
-              <HomeIcon className="h-7 w-7" />
+              <svg
+                height={24}
+                width={24}
+                viewBox="0 0 24 24"
+                className=" shrink-0"
+                fill="#b3b3b3"
+              >
+                <path d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z"></path>
+              </svg>
               <p>Home</p>
             </button>
           </Link>
@@ -85,7 +100,15 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
                   : `flex items-center space-x-2 hover:text-white`
               }
             >
-              <SearchIcon className="h-7 w-7" />
+              <svg
+                height={24}
+                width={24}
+                viewBox="0 0 24 24"
+                className=" shrink-0"
+                fill="#b3b3b3"
+              >
+                <path d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 101.414-1.414l-4.344-4.344a9.157 9.157 0 002.077-5.816c0-5.14-4.226-9.28-9.407-9.28zm-7.407 9.279c0-4.006 3.302-7.28 7.407-7.28s7.407 3.274 7.407 7.28-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.28z"></path>
+              </svg>
               <p>Search</p>
             </button>
           </Link>
@@ -100,7 +123,15 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
                   : `flex items-center space-x-2 hover:text-white`
               }
             >
-              <LibraryIcon className="h-7 w-7" />
+              <svg
+                height={24}
+                width={24}
+                viewBox="0 0 24 24"
+                className=" shrink-0"
+                fill="#b3b3b3"
+              >
+                <path d="M14.5 2.134a1 1 0 011 0l6 3.464a1 1 0 01.5.866V21a1 1 0 01-1 1h-6a1 1 0 01-1-1V3a1 1 0 01.5-.866zM16 4.732V20h4V7.041l-4-2.309zM3 22a1 1 0 01-1-1V3a1 1 0 012 0v18a1 1 0 01-1 1zm6 0a1 1 0 01-1-1V3a1 1 0 012 0v18a1 1 0 01-1 1z"></path>
+              </svg>
               <p>Your Library</p>
             </button>
           </Link>
@@ -109,8 +140,22 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
             <PlusCircleIcon className="h-7 w-7" />
             <p>Create Playlist</p>
           </button> */}
-          <button className="flex items-center pt-4 space-x-2 hover:text-white">
-            <HeartIcon className="h-7 w-7" />
+          <button
+            onClick={() => handleSelectLikedSongs()}
+            className={
+              router.asPath === "/collections/tracks"
+                ? `flex items-center space-x-2 pt-4 text-white`
+                : `flex items-center space-x-2 pt-4 hover:text-white`
+            }
+          >
+            <div className={sidebarStyles.likedSongsIconContainer}>
+              <div className={sidebarStyles.likedSongsIcon}>
+                <svg height={12} width={12} fill="white" viewBox="0 0 16 16">
+                  <path d="M15.724 4.22A4.313 4.313 0 0012.192.814a4.269 4.269 0 00-3.622 1.13.837.837 0 01-1.14 0 4.272 4.272 0 00-6.21 5.855l5.916 7.05a1.128 1.128 0 001.727 0l5.916-7.05a4.228 4.228 0 00.945-3.577z"></path>
+                </svg>
+              </div>
+            </div>
+
             <p>Liked songs</p>
           </button>
           <hr className="border-t-[0.1px]  border-[#282828]" />

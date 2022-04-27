@@ -1,16 +1,15 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
-import { useAppStore } from "../../store/AppStore";
 import { Player } from "../../components/Player/Player";
 import { PlaylistCollection } from "../../components/Main/Collection/PlaylistCollection";
 import { PodcastCollection } from "../../components/Main/Collection/PodcastCollection";
 import { AlbumCollection } from "../../components/Main/Collection/AlbumCollections";
 import { ArtistCollection } from "../../components/Main/Collection/ArtistCollection";
 import { useRouter } from "next/router";
+import { TrackCollection } from "../../components/Main/Collection/TrackCollection";
 
 const IndividualCollection: NextPage = () => {
-  const { libraryCollectionSelected } = useAppStore();
   const router = useRouter();
 
   return (
@@ -24,10 +23,12 @@ const IndividualCollection: NextPage = () => {
         <Sidebar />
         {router.asPath === "/collections/podcasts" ? (
           <PodcastCollection />
-        ) : router.asPath  === "/collections/artists" ? (
+        ) : router.asPath === "/collections/artists" ? (
           <ArtistCollection />
-        ) : router.asPath  === "/collections/albums" ? (
+        ) : router.asPath === "/collections/albums" ? (
           <AlbumCollection />
+        ) : router.asPath === "/collections/tracks" ? (
+          <TrackCollection />
         ) : (
           <PlaylistCollection />
         )}

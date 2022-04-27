@@ -1,0 +1,21 @@
+.likedSongsIconContainer {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: 24px;
+  justify-content: center;
+  padding: 4px;
+  position: relative;
+  width: 24px;
+}
+
+.likedSongsIcon {
+  align-items: center;
+  display: flex;
+  background: linear-gradient(135deg, #450af5, #c4efd9);
+  border-radius: 2px;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+}

@@ -26,9 +26,9 @@ interface State {
   setSelectedAlbum: (album: any) => void;
   isPlaying: boolean;
   setIsPlaying: (prev: boolean) => void;
-  libraryCollectionSelected: "playlists" | "podcasts" | "artists" | "albums";
+  libraryCollectionSelected: "playlists" | "podcasts" | "artists" | "albums" | "tracks";
   setLibraryCollectionSelected: (
-    prev: "playlists" | "podcasts" | "artists" | "albums"
+    prev: "playlists" | "podcasts" | "artists" | "albums" | "tracks"
   ) => void;
 }
 
