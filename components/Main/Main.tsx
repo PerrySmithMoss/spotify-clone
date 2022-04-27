@@ -115,7 +115,7 @@ export const Main: React.FC<MainProps> = ({}) => {
             <div className="flex content-center items-center text-sm space-x-1 mt-5">
               <div>
                 <p className="font-medium tracking-wide">
-                  {session?.user.name}
+                  {selectedPlaylist?.owner?.display_name ? selectedPlaylist?.owner?.display_name : session?.user?.name}
                 </p>
               </div>
               <div>•</div>
