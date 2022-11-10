@@ -10,6 +10,7 @@ import { useSpotify } from "../../../hooks/useSpotify";
 import { ClockIcon } from "@heroicons/react/outline";
 import { milliSecondsToHours } from "../../../utils/time";
 import { PodcastEpisode } from "./PodcastEpisode";
+import { trimString } from "../../../utils/trimString";
 
 interface PodcastProps {}
 
@@ -55,7 +56,7 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
   //     }
   //   }, [spotifyAPI, selectedPodcastId]);
 
-    // console.log("Show: ", selectedPodcast);
+  // console.log("Show: ", selectedPodcast);
   // console.log(podcastEpisodes)
 
   //   useEffect(() => {
@@ -155,54 +156,61 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
         </div>
       )}
       {selectedPodcast ? (
-        <section
-          className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
-        >
-          <img
-            className="w-56 h-56 shadow-2xl rounded-lg"
-            src={selectedPodcast?.images[0]?.url}
-            alt="Playlist picture"
-          />
-          <div>
-            <p className="uppercase text-xs font-medium tracking-wide">
-              Playlist
-            </p>
-            <h1 className="mt-4 text-2xl md:text-4xl lg:text-6xl font-bold">
-              {selectedPodcast?.name}
-            </h1>
-            <div className="flex content-center items-center text-sm space-x-1 mt-5">
-              <div>
-                <p className="font-medium text-lg tracking-wide">
-                  {selectedPodcast.publisher}
-                </p>
+        <section>
+          <div
+            className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
+          >
+            <img
+              className="w-56 h-56 shadow-2xl rounded-lg"
+              src={selectedPodcast?.images[0]?.url}
+              alt="Playlist picture"
+            />
+            <div>
+              <p className="uppercase text-xs font-medium tracking-wide">
+                Playlist
+              </p>
+              <h1 className="mt-4 text-2xl md:text-4xl lg:text-6xl font-bold">
+                {selectedPodcast?.name}
+              </h1>
+              <div className="flex content-center items-center text-sm space-x-1 mt-5">
+                <div>
+                  <p className="font-medium text-lg tracking-wide">
+                    {selectedPodcast.publisher}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
+          <p className="flex px-8 sm:hidden mt-3 text-[#b3b3b3] text-sm leading-relaxed">
+              {trimString(selectedPodcast?.html_description, 230)}
+            </p>
         </section>
       ) : (
         <div className="text-white">You must select a valid podcast.</div>
       )}
       <div className="mx-7">
-      <div className="mt-4">
-        <div className="grid grid-cols-12 gap-6">
-          <div className=" col-span-8">
-            <h4 className="text-white mt-4 text-2xl md:text-xl lg:text-2xl font-bold">
-              All Episodes
-            </h4>
-            {selectedPodcast?.episodes?.items?.map((episode: any) => (
-              <PodcastEpisode episode={episode} key={episode.id} />
-            ))}
-            <hr className={`${podcastStyles.border}`} />
-          </div>
-          <div className=" col-span-4">
-          <h4 className="text-white mt-4 text-2xl md:text-xl lg:text-2xl font-bold">
-              About
-            </h4>
-            <p className="mt-3 text-[#b3b3b3] text-sm leading-relaxed">{selectedPodcast?.html_description}</p>
+        <div className="mt-4">
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-8">
+              <h4 className="text-white mt-4 text-2xl md:text-xl lg:text-2xl font-bold">
+                All Episodes
+              </h4>
+              {selectedPodcast?.episodes?.items?.map((episode: any) => (
+                <PodcastEpisode episode={episode} key={episode.id} />
+              ))}
+              <hr className={`${podcastStyles.border}`} />
+            </div>
+            <div className="hidden sm:block sm:col-span-4">
+              <h4 className="text-white mt-4 text-2xl md:text-xl lg:text-2xl font-bold">
+                About
+              </h4>
+              <p className="mt-3 text-[#b3b3b3] text-sm leading-relaxed">
+                {trimString(selectedPodcast?.html_description, 230)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

@@ -49,6 +49,9 @@ module.exports = {
           xsm: "530px",
           // => @media (min-width: 530px) { ... }
 
+          sm: "640px",
+          // => @media (min-width: 640px) { ... }
+
           largeSmall: "700px",
           // => @media (min-width: 768px) { ... }
 

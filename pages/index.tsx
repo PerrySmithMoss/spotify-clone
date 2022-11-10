@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import { Main } from "../components/Main/Main";
 import Head from "next/head";
 import { Player } from "../components/Player/Player";
 import { Sidebar } from "../components/Sidebar/Sidebar";

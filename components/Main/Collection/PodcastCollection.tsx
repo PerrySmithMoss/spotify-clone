@@ -49,7 +49,8 @@ export const PodcastCollection: React.FC<PodcastCollectionProps> = ({}) => {
 
   const handleSelectPodcast = (id: string) => {
     setSelectedPodcastId(id);
-    router.push(`/playlist/${id}`)
+
+    router.push(`/podcast/${id}`)
   };
 
   const handleCollectionChange = (
@@ -200,7 +201,7 @@ export const PodcastCollection: React.FC<PodcastCollectionProps> = ({}) => {
             {/* Playlists */}
             {usersPodcasts.map((podcast: any) => (
               <div
-                // onClick={() => handleSelectPodcast(podcast.show.id)}
+                onClick={() => handleSelectPodcast(podcast.show.id)}
                 key={podcast.show.id}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >

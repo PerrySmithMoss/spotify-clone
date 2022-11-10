@@ -41,7 +41,6 @@ export const Album: React.FC<AlbumProps> = ({}) => {
       spotifyAPI
         .getAlbum(selectedAlbumId)
         .then((data) => {
-          console.log("Album: ", data.body);
           setSelectedAlbum(data.body);
         })
         .catch((err) => console.log("Something went wrong: ", err));
@@ -53,7 +52,6 @@ export const Album: React.FC<AlbumProps> = ({}) => {
       spotifyAPI
         .getArtistAlbums(selectedAlbum?.artists[0].id)
         .then((data) => {
-          console.log("All albums: ", data.body.items);
           setArtistAlbums(data.body.items);
         })
         .catch((err) =>

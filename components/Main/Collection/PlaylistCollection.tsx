@@ -13,6 +13,7 @@ import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
 import { ClockIcon } from "@heroicons/react/outline";
 import collectionStyles from "./collection.module.css";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface PlaylistCollectionProps {}
 
@@ -209,40 +210,42 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
             </div>
             {/* Playlists */}
             {userPlaylists.map((playlist: any) => (
-              <div
-                key={playlist.id}
-                onClick={() => handleSelectPlaylist(playlist.id)}
-                className={`${collectionStyles.playlist} cursor-pointer hover:bg-[#282828]`}
-              >
-                <div className="h-full">
-                  <div className=" relative mb-4">
-                    <div className={collectionStyles.playlistImage}>
-                      <div>
-                        <img
-                          className={`h-full left-0 absolute top-0 w-full block ${collectionStyles.cardImage}`}
-                          src={playlist.images[0].url}
-                          alt={playlist.name}
-                        />
+              <Link key={playlist.id} href={`/playlist/${playlist.id}`}>
+                <div
+                  key={playlist.id}
+                  onClick={() => handleSelectPlaylist(playlist.id)}
+                  className={`${collectionStyles.playlist} cursor-pointer hover:bg-[#282828]`}
+                >
+                  <div className="h-full">
+                    <div className=" relative mb-4">
+                      <div className={collectionStyles.playlistImage}>
+                        <div>
+                          <img
+                            className={`h-full left-0 absolute top-0 w-full block ${collectionStyles.cardImage}`}
+                            src={playlist.images[0].url}
+                            alt={playlist.name}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="min-h-[62px]">
-                    <a
-                      href="#"
-                      className=" z-10 relative inline-block max-w-full align-middle"
-                    >
-                      <div className=" text-white text-[1rem] leading-[1.5rem] no-underline tracking-normal font-bold overflow-hidden text-ellipsis whitespace-nowrap">
-                        {playlist.name}
+                    <div className="min-h-[62px]">
+                      <a
+                        href="#"
+                        className=" z-10 relative inline-block max-w-full align-middle"
+                      >
+                        <div className=" text-white text-[1rem] leading-[1.5rem] no-underline tracking-normal font-bold overflow-hidden text-ellipsis whitespace-nowrap">
+                          {playlist.name}
+                        </div>
+                      </a>
+                      <div className=" text-[#6a6a6a] text-[0.875rem] leading-[1rem] tracking-normal font-normal mt-1 overflow-hidden text-ellipsis whitespace-normal">
+                        {playlist.description === ""
+                          ? playlist.owner.display_name
+                          : playlist.description}
                       </div>
-                    </a>
-                    <div className=" text-[#6a6a6a] text-[0.875rem] leading-[1rem] tracking-normal font-normal mt-1 overflow-hidden text-ellipsis whitespace-normal">
-                      {playlist.description === ""
-                        ? playlist.owner.display_name
-                        : playlist.description}
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

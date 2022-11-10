@@ -73,7 +73,6 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
         .getArtistRelatedArtists(selectedArtistId)
         .then((data) => {
           setRelatedArtists(data.body.artists);
-          console.log("Related artists: : ", data.body.artists);
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }

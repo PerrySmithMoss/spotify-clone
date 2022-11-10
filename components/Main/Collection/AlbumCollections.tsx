@@ -21,12 +21,13 @@ export const AlbumCollection: React.FC<AlbumCollectionProps> = ({}) => {
   const spotifyAPI = useSpotify();
   const router = useRouter();
   const [colour, setColour] = useState<any>(null);
-  const [userArtists, setUserArtists] = useState<any[]>([]);
+  const [userAlbums, setUserAlbums] = useState<any[]>([]);
   const {
     libraryCollectionSelected,
     setLibraryCollectionSelected,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
+    setSelectedAlbumId,
   } = useAppStore();
 
   useEffect(() => {
@@ -38,15 +39,17 @@ export const AlbumCollection: React.FC<AlbumCollectionProps> = ({}) => {
       spotifyAPI
         .getMySavedAlbums()
         .then((data) => {
-          setUserArtists(data.body.items);
+          setUserAlbums(data.body.items);
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }
   }, [spotifyAPI, libraryCollectionSelected]);
 
-  // const handleSelectPlaylist = (id: string) => {
-  //   setSelectedPlaylistId(id);
-  // };
+  const handleSelectAlbum = (id: string) => {
+    setSelectedAlbumId(id);
+
+    router.push(`/album/${id}`);
+  };
 
   const handleCollectionChange = (
     collection: "playlists" | "podcasts" | "artists" | "albums"
@@ -166,9 +169,9 @@ export const AlbumCollection: React.FC<AlbumCollectionProps> = ({}) => {
         <div className="mt-4">
           <div className={`${collectionStyles.topTracksGrid}`}>
             {/* Playlists */}
-            {userArtists.map((album: any) => (
+            {userAlbums.map((album: any) => (
               <div
-                // onClick={() => handleSelectAlbum(album.id)}
+                onClick={() => handleSelectAlbum(album.album.id)}
                 key={album.album.id}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
@@ -183,7 +186,7 @@ export const AlbumCollection: React.FC<AlbumCollectionProps> = ({}) => {
                     {album.album.name}
                   </p>
                   <p className="mt-0.5 text-[#b3b3b3] text-sm truncate">
-                  {album.album.artists[0].name}
+                    {album.album.artists[0].name}
                   </p>
                 </div>
               </div>

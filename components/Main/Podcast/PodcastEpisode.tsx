@@ -6,6 +6,7 @@ import {
   milliSecondsToHoursMinutesAndSeconds,
   milliSecondsToMinutesAndSeconds,
 } from "../../../utils/time";
+import { trimString } from "../../../utils/trimString";
 import podcastStyles from "./podcast.module.css";
 
 interface PodcastEpisodeProps {
@@ -47,7 +48,7 @@ export const PodcastEpisode: React.FC<PodcastEpisodeProps> = ({ episode }) => {
           />
           <div>
             <p className="truncate text-white">{episode?.name}</p>
-            <p className="text-sm ">{episode?.description}</p>
+            <p className="text-sm">{trimString(episode?.description, 130)}</p>
             <div className="flex content-center items-center mt-4">
               {episode.explicit === true && (
                 <div

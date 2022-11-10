@@ -13,6 +13,7 @@ import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
 import { ClockIcon } from "@heroicons/react/outline";
 import collectionStyles from "./collection.module.css";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface ArtistCollectionProps {}
 
@@ -28,6 +29,7 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
     setSelectedPlaylistId,
+    setSelectedArtistId
   } = useAppStore();
 
   useEffect(() => {
@@ -45,8 +47,10 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
     }
   }, [spotifyAPI, libraryCollectionSelected]);
 
-  const handleSelectPlaylist = (id: string) => {
-    setSelectedPlaylistId(id);
+  const handleSelectArtist = (id: string) => {
+    setSelectedArtistId(id);
+
+    router.push(`/artist/${id}`)
   };
 
   const handleCollectionChange = (
@@ -168,26 +172,26 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
           <div className={`${collectionStyles.topTracksGrid}`}>
             {/* Playlists */}
             {userTopArtists.map((artist: any) => (
-              <div
-                key={artist.id}
-                // onClick={() => handleSelectArtist(artist.id)}
-                className=" hover:bg-[#282828] rounded-md p-2 pb-6"
-              >
-                <img
-                  className="rounded-full h-[190px] w-full p-2"
-                  src={artist?.images[0]?.url}
-                  alt="Artist profile picture"
-                />
+                <div
+                  key={artist.id}
+                  onClick={() => handleSelectArtist(artist.id)}
+                  className=" hover:bg-[#282828] rounded-md p-2 pb-6"
+                >
+                  <img
+                    className="rounded-full h-[190px] w-full p-2"
+                    src={artist?.images[0]?.url}
+                    alt="Artist profile picture"
+                  />
 
-                <div className="ml-2 mt-1.5">
-                  <p className="text-white hover:underline truncate">
-                    {artist.name}
-                  </p>
-                  <p className="mt-0.5 text-[#b3b3b3] text-sm truncate">
-                    Artist
-                  </p>
+                  <div className="ml-2 mt-1.5">
+                    <p className="text-white hover:underline truncate">
+                      {artist.name}
+                    </p>
+                    <p className="mt-0.5 text-[#b3b3b3] text-sm truncate">
+                      Artist
+                    </p>
+                  </div>
                 </div>
-              </div>
             ))}
           </div>
         </div>
