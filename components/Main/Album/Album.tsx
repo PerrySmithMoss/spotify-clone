@@ -200,8 +200,8 @@ export const Album: React.FC<AlbumProps> = ({}) => {
                 ))}
               </div>
               <div className="mt-4 ml-8">
-                {selectedAlbum.copyrights.map((copyright: any) => (
-                  <p className="text-gray-200 text-[11px]">© {copyright.text}</p>
+                {selectedAlbum.copyrights.map((copyright: any, index: number) => (
+                  <p key={index} className="text-gray-200 text-[11px]">© {copyright.text}</p>
                 ))}
               </div>
             </div>
