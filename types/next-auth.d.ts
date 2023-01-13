@@ -13,6 +13,7 @@ declare module "next-auth" {
       name: string
       id: string
       email: string
-    }
+    },
+    error: unknown
   }
 }
