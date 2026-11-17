@@ -1,7 +1,8 @@
+import Image from "next/image";
 import React from "react";
 import { useSpotify } from "../../../hooks/useSpotify";
-import { milliSecondsToMinutesAndSeconds } from "../../../utils/time";
 import { useAppStore } from "../../../store/AppStore";
+import { milliSecondsToMinutesAndSeconds } from "../../../utils/time";
 import albumStyles from "./album.module.css";
 
 interface SongProps {
@@ -11,8 +12,7 @@ interface SongProps {
 
 export const AlbumTracks: React.FC<SongProps> = ({ song, order }) => {
   const spotifyApi = useSpotify();
-  const { currentTrackId, setCurrentTrackId, isPlaying, setIsPlaying } =
-    useAppStore();
+  const { setCurrentTrackId, setIsPlaying } = useAppStore();
   const playSong = () => {
     // console.log(song)
     setCurrentTrackId(song.track.id);
@@ -30,9 +30,14 @@ export const AlbumTracks: React.FC<SongProps> = ({ song, order }) => {
       <div className="flex items-center pl-3 py-1 w-full">
         <p>{order + 1}</p>
         <div className="relative">
-          <img
+          <Image
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="h-auto w-10 group-hover:opacity-30"
-            src={song?.album?.images[0]?.url}
+            src={
+              song?.album?.images[0]?.url || "/assets/images/placeholder.svg"
+            }
             alt={song?.album?.name}
           />
           <div className={`${albumStyles.searchPlayButtton} `}>
@@ -45,16 +50,12 @@ export const AlbumTracks: React.FC<SongProps> = ({ song, order }) => {
           </div>
         </div>
         <div>
-          <p className="w-36 lg:w-[20rem] truncate text-white">
-            {song?.name}
-          </p>
+          <p className="w-36 lg:w-[20rem] truncate text-white">{song?.name}</p>
           <p className="w-40 text-sm">{song?.artists[0].name}</p>
         </div>
       </div>
       <div className="flex items-center justify-between ml-auto text-sm md:ml-0 pr-10">
-        <p className="hidden md:inline w-40 lg:w-96 truncate">
-          {song?.name}
-        </p>
+        <p className="hidden md:inline w-40 lg:w-96 truncate">{song?.name}</p>
         <p>{milliSecondsToMinutesAndSeconds(song?.duration_ms)}</p>
       </div>
     </div>

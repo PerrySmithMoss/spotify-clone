@@ -8,3 +8,11 @@ export const colours = [
   "from-purple-500",
   "from-orange-500",
 ];
+
+export function colourFor(key: string) {
+  const hash = Array.from(key).reduce(
+    (value, char) => (value * 31 + char.charCodeAt(0)) >>> 0,
+    0,
+  );
+  return colours[hash % colours.length];
+}

@@ -1,8 +1,15 @@
-export const debounce = (func: any, delay: number) => {
-  let setTimoutInstance: any;
-  return function () {
-    const args = arguments;
-    if (setTimoutInstance) clearTimeout(setTimoutInstance);
-    setTimoutInstance = setTimeout(() => func.apply("", args), delay);
+export const debounce = <Args extends unknown[]>(
+  func: (...args: Args) => unknown,
+  delay: number,
+) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  const debounced = (...args: Args) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
   };
+  debounced.cancel = () => {
+    if (timeout) clearTimeout(timeout);
+    timeout = undefined;
+  };
+  return debounced;
 };

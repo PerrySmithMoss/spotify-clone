@@ -1,16 +1,14 @@
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { useAppStore } from "../../../store/AppStore";
-import podcastStyles from "./podcast.module.css";
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
-import { colours } from "../../../constants/colors";
+import React, { useEffect } from "react";
+import { colourFor } from "../../../constants/colors";
 import { useSpotify } from "../../../hooks/useSpotify";
-import { ClockIcon } from "@heroicons/react/outline";
-import { milliSecondsToHours } from "../../../utils/time";
-import { PodcastEpisode } from "./PodcastEpisode";
+import { useAppStore } from "../../../store/AppStore";
 import { trimString } from "../../../utils/trimString";
+import podcastStyles from "./podcast.module.css";
+import { PodcastEpisode } from "./PodcastEpisode";
 
 interface PodcastProps {}
 
@@ -18,21 +16,17 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
   const {
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
-    selectedPodcastId,
+    selectedPodcastId: storedId,
     selectedPodcast,
     setSelectedPodcast,
-    setSelectedPodcastId,
   } = useAppStore();
   const spotifyAPI = useSpotify();
   const router = useRouter();
+  const selectedPodcastId =
+    typeof router.query.id === "string" ? router.query.id : storedId;
   const { data: session } = useSession();
-  const [colour, setColour] = useState<any>(null);
-  const [podcastEpisodes, setPodcastEpisodes] = useState<object[]>([]);
-  const [isShowMore, setIsShowMore] = useState(false);
 
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [selectedPodcastId]);
+  const colour = colourFor(String(selectedPodcastId ?? ""));
 
   useEffect(() => {
     if (typeof selectedPodcastId === "string") {
@@ -43,7 +37,7 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }
-  }, [spotifyAPI, selectedPodcastId]);
+  }, [spotifyAPI, selectedPodcastId, setSelectedPodcast]);
 
   //   useEffect(() => {
   //     if (typeof selectedPodcastId === "string") {
@@ -104,7 +98,7 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
   //   };
 
   return (
-    <div className="flex-grow pb-28 h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow pb-28 h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -131,9 +125,16 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -158,11 +159,17 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
       {selectedPodcast ? (
         <section>
           <div
-            className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
+            className={`flex items-end space-x-7 bg-linear-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
           >
-            <img
+            <Image
+              width={300}
+              height={300}
+              sizes="(max-width: 768px) 50vw, 240px"
               className="w-56 h-56 shadow-2xl rounded-lg"
-              src={selectedPodcast?.images[0]?.url}
+              src={
+                selectedPodcast?.images[0]?.url ||
+                "/assets/images/placeholder.svg"
+              }
               alt="Playlist picture"
             />
             <div>
@@ -182,8 +189,8 @@ export const Podcast: React.FC<PodcastProps> = ({}) => {
             </div>
           </div>
           <p className="flex px-8 sm:hidden mt-3 text-[#b3b3b3] text-sm leading-relaxed">
-              {trimString(selectedPodcast?.html_description, 230)}
-            </p>
+            {trimString(selectedPodcast?.html_description, 230)}
+          </p>
         </section>
       ) : (
         <div className="text-white">You must select a valid podcast.</div>

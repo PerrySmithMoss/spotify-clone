@@ -3,34 +3,42 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "^16.13.0"
-},
+    "node": "26.x"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "verify": "yarn lint && yarn typecheck && yarn test && yarn build"
   },
   "dependencies": {
-    "@heroicons/react": "^1.0.6",
-    "@tailwindcss/line-clamp": "^0.3.1",
-    "next": "12.1.0",
-    "next-auth": "4.3.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "spotify-web-api-node": "^5.0.2",
-    "tailwind-scrollbar-hide": "^1.1.7",
-    "zustand": "^3.7.1"
+    "@heroicons/react": "2.2.0",
+    "next": "16.4.6",
+    "next-auth": "4.24.15",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "spotify-web-api-node": "5.0.2",
+    "tailwind-scrollbar-hide": "4.0.0",
+    "zustand": "5.1.0"
   },
   "devDependencies": {
-    "@types/node": "17.0.22",
-    "@types/react": "17.0.42",
-    "@types/spotify-web-api-node": "^5.0.7",
-    "autoprefixer": "^10.4.4",
-    "eslint": "8.11.0",
-    "eslint-config-next": "12.1.0",
-    "postcss": "^8.4.12",
-    "tailwindcss": "^3.0.23",
-    "typescript": "4.6.2"
-  }
+    "@playwright/test": "1.65.1",
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/spotify-web-api-node": "5.0.11",
+    "eslint": "10.15.0",
+    "eslint-config-next": "16.4.6",
+    "postcss": "8.5.33",
+    "tailwindcss": "4.3.5",
+    "tsx": "4.23.15",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "typescript-compiler": "npm:typescript@7.0.2"
+  },
+  "packageManager": "yarn@1.22.22"
 }

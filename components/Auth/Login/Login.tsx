@@ -1,8 +1,8 @@
+import { signIn } from "next-auth/react";
 import React from "react";
-import { getProviders, signIn } from "next-auth/react";
 
 interface LoginProps {
-  providers: any;
+  providers: Record<string, { id: string; name: string }>;
 }
 
 export const Login: React.FC<LoginProps> = ({ providers }) => {
@@ -13,7 +13,7 @@ export const Login: React.FC<LoginProps> = ({ providers }) => {
       </div>
 
       <div className="flex justify-center mt-3">
-        {Object.values(providers).map((provider: any) => (
+        {Object.values(providers).map((provider) => (
           <button
             key={provider.id}
             onClick={() => signIn(provider.id, { callbackUrl: "/" })}

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSpotify } from "../../hooks/useSpotify";
+import Image from "next/image";
+import React from "react";
 import searchStyles from "./search.module.css";
 
 interface YourTopGenresProps {}
@@ -16,15 +16,18 @@ export const YourTopGenres: React.FC<YourTopGenresProps> = ({}) => {
         >
           {genres.map((genre: any) => (
             <a
-            key={genre.id}
+              key={genre.id}
               className={searchStyles.genreContainer}
               style={{ backgroundColor: genre.colour }}
             >
               <h3 className={searchStyles.genreHeading}>{genre.genre}</h3>
-              <img
+              <Image
+                width={300}
+                height={300}
+                sizes="(max-width: 768px) 50vw, 240px"
                 loading="lazy"
                 className={searchStyles.genreImage}
-                src={genre.image}
+                src={genre.image || "/assets/images/placeholder.svg"}
                 alt="Genre image"
               />
             </a>

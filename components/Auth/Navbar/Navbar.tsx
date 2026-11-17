@@ -1,5 +1,5 @@
 import React from "react";
-import authNavStyles from "./auth-navbar.module.css"
+import authNavStyles from "./auth-navbar.module.css";
 
 interface NavbarProps {}
 

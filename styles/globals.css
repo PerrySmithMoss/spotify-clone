@@ -1,13 +1,56 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tailwind-scrollbar-hide/v4";
+
+@theme {
+  --color-spotify-green: #1ed760;
+  --color-spotify-black: #000;
+  --color-spotify-gray: #121212;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-xxxs: 290px;
+  --breakpoint-xxs: 375px;
+  --breakpoint-xss: 424px;
+  --breakpoint-xs: 475px;
+  --breakpoint-xsm: 530px;
+  --breakpoint-large-small: 700px;
+  --breakpoint-large-md: 810px;
+  --breakpoint-large-tablet: 912px;
+  --breakpoint-llg: 1050px;
+  --breakpoint-lllg: 1180px;
+  --breakpoint-1xl: 1251px;
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-gray-200, currentColor);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    Fira Sans,
+    Droid Sans,
+    Helvetica Neue,
+    sans-serif;
 }
 
 a {

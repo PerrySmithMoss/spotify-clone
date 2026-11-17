@@ -1,25 +1,21 @@
+import { ClockIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useAppStore } from "../../../store/AppStore";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
-import albumStyles from "./album.module.css";
-import { colours } from "../../../constants/colors";
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { colourFor } from "../../../constants/colors";
 import { useSpotify } from "../../../hooks/useSpotify";
-import {
-  milliSecondsToHours,
-  milliSecondsToHoursMinutesAndSeconds,
-  milliSecondsToMinutesAndSeconds,
-} from "../../../utils/time";
-import { ClockIcon } from "@heroicons/react/outline";
+import { useAppStore } from "../../../store/AppStore";
+import { milliSecondsToHoursMinutesAndSeconds } from "../../../utils/time";
+import albumStyles from "./album.module.css";
 import { AlbumTracks } from "./AlbumTracks";
 
 interface AlbumProps {}
 
 export const Album: React.FC<AlbumProps> = ({}) => {
   const {
-    selectedAlbumId,
+    selectedAlbumId: storedId,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
     selectedAlbum,
@@ -27,14 +23,13 @@ export const Album: React.FC<AlbumProps> = ({}) => {
     setSelectedAlbumId,
   } = useAppStore();
   const router = useRouter();
+  const selectedAlbumId =
+    typeof router.query.id === "string" ? router.query.id : storedId;
   const { data: session } = useSession();
-  const [colour, setColour] = useState<any>(null);
   const spotifyAPI = useSpotify();
   const [artistAlbums, setArtistAlbums] = useState<any>([]);
 
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [selectedAlbumId]);
+  const colour = colourFor(String(selectedAlbumId ?? ""));
 
   useEffect(() => {
     if (typeof selectedAlbumId === "string") {
@@ -45,23 +40,24 @@ export const Album: React.FC<AlbumProps> = ({}) => {
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }
-  }, [spotifyAPI, selectedAlbumId]);
+  }, [spotifyAPI, selectedAlbumId, setSelectedAlbum]);
 
+  const artistId = selectedAlbum?.artists?.[0]?.id;
   useEffect(() => {
-    if (typeof selectedAlbumId === "string") {
+    if (typeof artistId === "string") {
       spotifyAPI
-        .getArtistAlbums(selectedAlbum?.artists[0].id)
+        .getArtistAlbums(artistId)
         .then((data) => {
           setArtistAlbums(data.body.items);
         })
         .catch((err) =>
           console.log(
             "Something went wrong while trying to fetch artists albums: ",
-            err
-          )
+            err,
+          ),
         );
     }
-  }, [spotifyAPI, selectedAlbumId]);
+  }, [spotifyAPI, artistId]);
 
   const handleSelectAlbum = (id: string) => {
     setSelectedAlbumId(id);
@@ -69,7 +65,7 @@ export const Album: React.FC<AlbumProps> = ({}) => {
   };
 
   return (
-    <div className="flex-grow pb-28 h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow pb-28 h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -96,9 +92,16 @@ export const Album: React.FC<AlbumProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -123,11 +126,17 @@ export const Album: React.FC<AlbumProps> = ({}) => {
       {selectedAlbum ? (
         <>
           <section
-            className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[280px] text-white pl-7 pb-5`}
+            className={`flex items-end space-x-7 bg-linear-to-b to-spotify-gray ${colour} h-[280px] text-white pl-7 pb-5`}
           >
-            <img
+            <Image
+              width={300}
+              height={300}
+              sizes="(max-width: 768px) 50vw, 240px"
               className="w-56 h-56 shadow-2xl"
-              src={selectedAlbum?.images[0]?.url}
+              src={
+                selectedAlbum?.images[0]?.url ||
+                "/assets/images/placeholder.svg"
+              }
               alt="Artist picture"
             />
             <div className="pb-4">
@@ -139,9 +148,15 @@ export const Album: React.FC<AlbumProps> = ({}) => {
               </h1>
               <div className="flex content-center items-center text-sm space-x-1 mt-5">
                 <div>
-                  <img
+                  <Image
+                    width={300}
+                    height={300}
+                    sizes="(max-width: 768px) 50vw, 240px"
                     className="h-6 w-6"
-                    src={selectedAlbum?.images[0]?.url}
+                    src={
+                      selectedAlbum?.images[0]?.url ||
+                      "/assets/images/placeholder.svg"
+                    }
                     alt="Artist profile picture"
                   />
                 </div>
@@ -168,8 +183,8 @@ export const Album: React.FC<AlbumProps> = ({}) => {
                       selectedAlbum.tracks.items.reduce(
                         (acc: any, currentSong: any) =>
                           acc + currentSong.duration_ms,
-                        0
-                      )
+                        0,
+                      ),
                     )}{" "}
                     sec
                   </span>
@@ -200,9 +215,13 @@ export const Album: React.FC<AlbumProps> = ({}) => {
                 ))}
               </div>
               <div className="mt-4 ml-8">
-                {selectedAlbum.copyrights.map((copyright: any, index: number) => (
-                  <p key={index} className="text-gray-200 text-[11px]">© {copyright.text}</p>
-                ))}
+                {selectedAlbum.copyrights.map(
+                  (copyright: any, index: number) => (
+                    <p key={index} className="text-gray-200 text-[11px]">
+                      © {copyright.text}
+                    </p>
+                  ),
+                )}
               </div>
             </div>
           </section>
@@ -220,9 +239,15 @@ export const Album: React.FC<AlbumProps> = ({}) => {
                     onClick={() => handleSelectAlbum(album.id)}
                   >
                     <div>
-                      <img
+                      <Image
+                        width={300}
+                        height={300}
+                        sizes="(max-width: 768px) 50vw, 240px"
                         className="rounded-md h-48 w-48 "
-                        src={album.images[0].url}
+                        src={
+                          album.images[0].url ||
+                          "/assets/images/placeholder.svg"
+                        }
                         alt={album.name}
                       />
                     </div>

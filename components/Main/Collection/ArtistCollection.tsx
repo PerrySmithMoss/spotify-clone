@@ -1,19 +1,12 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { colours } from "../../../constants/colors";
 import { useSpotify } from "../../../hooks/useSpotify";
-import {
-  milliSecondsToHours,
-  milliSecondsToMinutesAndSeconds,
-} from "../../../utils/time";
 import { useAppStore } from "../../../store/AppStore";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
 // import { Songs } from "../Song/Songs";
-import { ClockIcon } from "@heroicons/react/outline";
-import collectionStyles from "./collection.module.css";
 import { useRouter } from "next/router";
-import Link from "next/link";
+import collectionStyles from "./collection.module.css";
 
 interface ArtistCollectionProps {}
 
@@ -21,20 +14,18 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
   const { data: session } = useSession();
   const spotifyAPI = useSpotify();
   const router = useRouter();
-  const [colour, setColour] = useState<any>(null);
   const [userTopArtists, setUserTopArtists] = useState<any[]>([]);
   const {
-    libraryCollectionSelected,
+    libraryCollectionSelected: storedCollection,
     setLibraryCollectionSelected,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
-    setSelectedPlaylistId,
-    setSelectedArtistId
+    setSelectedArtistId,
   } = useAppStore();
-
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [libraryCollectionSelected]);
+  const libraryCollectionSelected =
+    typeof router.query.collection === "string"
+      ? router.query.collection
+      : storedCollection;
 
   useEffect(() => {
     if (libraryCollectionSelected === "artists") {
@@ -50,18 +41,18 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
   const handleSelectArtist = (id: string) => {
     setSelectedArtistId(id);
 
-    router.push(`/artist/${id}`)
+    router.push(`/artist/${id}`);
   };
 
   const handleCollectionChange = (
-    collection: "playlists" | "podcasts" | "artists" | "albums"
+    collection: "playlists" | "podcasts" | "artists" | "albums",
   ) => {
     setLibraryCollectionSelected(collection);
     router.push(`/collections/${collection}`);
   };
 
   return (
-    <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -142,9 +133,16 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -172,26 +170,31 @@ export const ArtistCollection: React.FC<ArtistCollectionProps> = ({}) => {
           <div className={`${collectionStyles.topTracksGrid}`}>
             {/* Playlists */}
             {userTopArtists.map((artist: any) => (
-                <div
-                  key={artist.id}
-                  onClick={() => handleSelectArtist(artist.id)}
-                  className=" hover:bg-[#282828] rounded-md p-2 pb-6"
-                >
-                  <img
-                    className="rounded-full h-[190px] w-full p-2"
-                    src={artist?.images[0]?.url}
-                    alt="Artist profile picture"
-                  />
+              <div
+                key={artist.id}
+                onClick={() => handleSelectArtist(artist.id)}
+                className=" hover:bg-[#282828] rounded-md p-2 pb-6"
+              >
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
+                  className="rounded-full h-[190px] w-full p-2"
+                  src={
+                    artist?.images[0]?.url || "/assets/images/placeholder.svg"
+                  }
+                  alt="Artist profile picture"
+                />
 
-                  <div className="ml-2 mt-1.5">
-                    <p className="text-white hover:underline truncate">
-                      {artist.name}
-                    </p>
-                    <p className="mt-0.5 text-[#b3b3b3] text-sm truncate">
-                      Artist
-                    </p>
-                  </div>
+                <div className="ml-2 mt-1.5">
+                  <p className="text-white hover:underline truncate">
+                    {artist.name}
+                  </p>
+                  <p className="mt-0.5 text-[#b3b3b3] text-sm truncate">
+                    Artist
+                  </p>
                 </div>
+              </div>
             ))}
           </div>
         </div>

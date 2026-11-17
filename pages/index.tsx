@@ -1,9 +1,10 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
+import { getServerSession } from "next-auth/next";
 import Head from "next/head";
+import { Dashboard } from "../components/Dashboard/Dashboard";
 import { Player } from "../components/Player/Player";
 import { Sidebar } from "../components/Sidebar/Sidebar";
-import { getSession } from "next-auth/react";
-import { Dashboard } from "../components/Dashboard/Dashboard";
+import { authOptions } from "../lib/auth";
 
 const Home: NextPage = () => {
   return (
@@ -27,8 +28,11 @@ const Home: NextPage = () => {
 
 export default Home;
 
-export const getServerSideProps = async (context: any) => {
-  const session = await getSession(context);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session || session.error)
+    return { redirect: { destination: "/auth/login", permanent: false } };
 
   return {
     props: {

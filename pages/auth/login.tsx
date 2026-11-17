@@ -1,10 +1,13 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { getServerSession } from "next-auth/next";
 import Head from "next/head";
-import { getProviders } from "next-auth/react";
-import { Navbar } from "../../components/Auth/Navbar/Navbar";
 import { Login as LoginComp } from "../../components/Auth/Login/Login";
+import { Navbar } from "../../components/Auth/Navbar/Navbar";
+import { authOptions } from "../../lib/auth";
 
-const Login: NextPage = ({ providers }: any) => {
+const Login = ({
+  providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <div>
       <Head>
@@ -21,12 +24,15 @@ const Login: NextPage = ({ providers }: any) => {
 
 export default Login;
 
-export const getServerSideProps = async () => {
-  const providers = await getProviders();
+export const getServerSideProps = (async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (session && !session.error)
+    return { redirect: { destination: "/", permanent: false } };
+  const providers = { spotify: { id: "spotify", name: "Spotify" } };
 
   return {
     props: {
       providers,
     },
   };
-};
+}) satisfies GetServerSideProps;

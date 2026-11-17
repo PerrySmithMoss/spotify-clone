@@ -5,7 +5,7 @@ import { Song } from "./Song";
 interface SongsProps {}
 
 export const Songs: React.FC<SongsProps> = ({}) => {
-  const { selectedPlaylist, setSelectedPlaylist } = useAppStore();
+  const { selectedPlaylist } = useAppStore();
   return (
     <div className="px-7 flex bg-[#121212] flex-col mt-3 space-y-2 pb-28 text-white">
       {selectedPlaylist?.tracks.items.map((song: any, i: number) => (

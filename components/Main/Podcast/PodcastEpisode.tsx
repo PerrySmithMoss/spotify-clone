@@ -1,11 +1,8 @@
+import Image from "next/image";
 import React from "react";
 import { useSpotify } from "../../../hooks/useSpotify";
 import { useAppStore } from "../../../store/AppStore";
-import {
-  convertMsToHM,
-  milliSecondsToHoursMinutesAndSeconds,
-  milliSecondsToMinutesAndSeconds,
-} from "../../../utils/time";
+import { convertMsToHM } from "../../../utils/time";
 import { trimString } from "../../../utils/trimString";
 import podcastStyles from "./podcast.module.css";
 
@@ -15,8 +12,7 @@ interface PodcastEpisodeProps {
 
 export const PodcastEpisode: React.FC<PodcastEpisodeProps> = ({ episode }) => {
   const spotifyApi = useSpotify();
-  const { currentTrackId, setCurrentTrackId, isPlaying, setIsPlaying } =
-    useAppStore();
+  const { setCurrentTrackId, setIsPlaying } = useAppStore();
   const playEpisode = () => {
     // console.log(song)
     setCurrentTrackId(episode.id);
@@ -28,11 +24,11 @@ export const PodcastEpisode: React.FC<PodcastEpisodeProps> = ({ episode }) => {
       .catch((err) => {
         console.error(
           "Something went wrong when trying to play song/episode: ",
-          err
+          err,
         );
       });
   };
-//   console.log(episode);
+  //   console.log(episode);
   return (
     <>
       <hr className={`${podcastStyles.border} mt-4 mb-4`} />
@@ -41,9 +37,12 @@ export const PodcastEpisode: React.FC<PodcastEpisodeProps> = ({ episode }) => {
         className={`text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
       >
         <div className="flex items-center space-x-4 p-1 w-full">
-          <img
+          <Image
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="h-[112px] w-[112px] group-hover:opacity-30"
-            src={episode?.images[0]?.url}
+            src={episode?.images[0]?.url || "/assets/images/placeholder.svg"}
             alt={episode?.name}
           />
           <div>

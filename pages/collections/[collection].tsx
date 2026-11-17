@@ -1,13 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { Sidebar } from "../../components/Sidebar/Sidebar";
-import { Player } from "../../components/Player/Player";
-import { PlaylistCollection } from "../../components/Main/Collection/PlaylistCollection";
-import { PodcastCollection } from "../../components/Main/Collection/PodcastCollection";
+import { useRouter } from "next/router";
 import { AlbumCollection } from "../../components/Main/Collection/AlbumCollections";
 import { ArtistCollection } from "../../components/Main/Collection/ArtistCollection";
-import { useRouter } from "next/router";
+import { PlaylistCollection } from "../../components/Main/Collection/PlaylistCollection";
+import { PodcastCollection } from "../../components/Main/Collection/PodcastCollection";
 import { TrackCollection } from "../../components/Main/Collection/TrackCollection";
+import { Player } from "../../components/Player/Player";
+import { Sidebar } from "../../components/Sidebar/Sidebar";
 
 const IndividualCollection: NextPage = () => {
   const router = useRouter();

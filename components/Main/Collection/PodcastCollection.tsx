@@ -1,18 +1,12 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { colours } from "../../../constants/colors";
 import { useSpotify } from "../../../hooks/useSpotify";
-import {
-  milliSecondsToHours,
-  milliSecondsToMinutesAndSeconds,
-} from "../../../utils/time";
 import { useAppStore } from "../../../store/AppStore";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
 // import { Songs } from "../Song/Songs";
-import { ClockIcon } from "@heroicons/react/outline";
-import collectionStyles from "./collection.module.css";
 import { useRouter } from "next/router";
+import collectionStyles from "./collection.module.css";
 
 interface PodcastCollectionProps {}
 
@@ -20,21 +14,18 @@ export const PodcastCollection: React.FC<PodcastCollectionProps> = ({}) => {
   const { data: session } = useSession();
   const spotifyAPI = useSpotify();
   const router = useRouter();
-  const [colour, setColour] = useState<any>(null);
   const [usersPodcasts, setUsersPodcasts] = useState<any[]>([]);
   const {
-    libraryCollectionSelected,
+    libraryCollectionSelected: storedCollection,
     setLibraryCollectionSelected,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
-    userPlaylists,
-    setUserPlaylists,
     setSelectedPodcastId,
   } = useAppStore();
-
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [libraryCollectionSelected]);
+  const libraryCollectionSelected =
+    typeof router.query.collection === "string"
+      ? router.query.collection
+      : storedCollection;
 
   useEffect(() => {
     if (libraryCollectionSelected === "podcasts") {
@@ -50,18 +41,18 @@ export const PodcastCollection: React.FC<PodcastCollectionProps> = ({}) => {
   const handleSelectPodcast = (id: string) => {
     setSelectedPodcastId(id);
 
-    router.push(`/podcast/${id}`)
+    router.push(`/podcast/${id}`);
   };
 
   const handleCollectionChange = (
-    collection: "playlists" | "podcasts" | "artists" | "albums"
+    collection: "playlists" | "podcasts" | "artists" | "albums",
   ) => {
     setLibraryCollectionSelected(collection);
     router.push(`/collections/${collection}`);
   };
 
   return (
-    <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -142,9 +133,16 @@ export const PodcastCollection: React.FC<PodcastCollectionProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -205,9 +203,15 @@ export const PodcastCollection: React.FC<PodcastCollectionProps> = ({}) => {
                 key={podcast.show.id}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-lg h-[190px] w-full p-2"
-                  src={podcast.show.images[0].url}
+                  src={
+                    podcast.show.images[0].url ||
+                    "/assets/images/placeholder.svg"
+                  }
                   alt="Playlist profile picture"
                 />
 

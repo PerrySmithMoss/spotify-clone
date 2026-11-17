@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { Artist } from "../../components/Main/Artist/Artist";
+import { Player } from "../../components/Player/Player";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { useAppStore } from "../../store/AppStore";
-import { Player } from "../../components/Player/Player";
-import { Artist } from "../../components/Main/Artist/Artist";
 
 const IndividualArtist: NextPage = () => {
-  const { selectedArtistId, selectedArtist } = useAppStore();
+  const { selectedArtist } = useAppStore();
 
   return (
     <div className="bg-spotify-black h-screen overflow-hidden">
@@ -17,7 +17,7 @@ const IndividualArtist: NextPage = () => {
       </Head>
       <main className="flex">
         <Sidebar />
-        {selectedArtistId && selectedArtistId !== undefined && <Artist />}
+        <Artist />
       </main>
       <div className="sticky bottom-0">
         <Player />

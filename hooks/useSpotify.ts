@@ -1,21 +1,20 @@
 import { signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
-import { spotifyAPI } from "../lib/spotify";
+import { useEffect, useMemo } from "react";
+import { createSpotifyClient } from "../lib/spotify";
 
 export function useSpotify() {
-  {
-    const { data: session } = useSession();
+  const { data: session } = useSession();
+  const accessToken = session?.user.accessToken;
+  const error = session?.error;
+  const spotifyAPI = useMemo(() => {
+    const client = createSpotifyClient();
+    if (accessToken && !error) client.setAccessToken(accessToken);
+    return client;
+  }, [accessToken, error]);
 
-    useEffect(() => {
-      if (session) {
-        // If access token attempt fails, redirect them to login page
-        if (session.error === "RefreshAccessTokenError") {
-          signIn();
-        }
+  useEffect(() => {
+    if (error === "RefreshAccessTokenError") void signIn("spotify");
+  }, [error]);
 
-        spotifyAPI.setAccessToken(session.user.accessToken);
-      }
-    }, [session]);
-    return spotifyAPI;
-  }
+  return spotifyAPI;
 }

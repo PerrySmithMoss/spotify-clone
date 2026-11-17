@@ -1,19 +1,18 @@
 import type { NextPage } from "next";
-import { Main } from "../components/Main/Main";
 import Head from "next/head";
 import { Player } from "../components/Player/Player";
-import { Sidebar } from "../components/Sidebar/Sidebar";
-import { getSession } from "next-auth/react";
-import { Dashboard } from "../components/Dashboard/Dashboard";
-import { useAppStore } from "../store/AppStore";
 import { SearchContainer } from "../components/Search/SearchContainer";
+import { Sidebar } from "../components/Sidebar/Sidebar";
 
 const Search: NextPage = () => {
   return (
     <div className="bg-spotify-gray h-screen overflow-hidden ">
       <Head>
         <title>Spotify - Search</title>
-        <meta name="description" content="Search Spotify to find the music you love." />
+        <meta
+          name="description"
+          content="Search Spotify to find the music you love."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex">
