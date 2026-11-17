@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { useSongInfo } from "../../hooks/useSongInfo";
+import { usePlayback } from "../../hooks/usePlayback";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useAppStore } from "../../store/AppStore";
 import { debounce } from "../../utils/debounce";
@@ -22,21 +23,16 @@ export const Player: React.FC<PlayerProps> = ({}) => {
   const { data: session } = useSession();
 
   const [volume, setVolume] = useState(50);
-  const { currentTrackId, setCurrentTrackId, isPlaying, setIsPlaying } =
-    useAppStore();
+  const {
+    currentTrackId,
+    setCurrentTrackId,
+    isPlaying,
+    setIsPlaying,
+    playbackError,
+    isPlaybackPending,
+  } = useAppStore();
   const songInfo = useSongInfo();
-
-  const handlePlayPause = () => {
-    spotifyApi.getMyCurrentPlaybackState().then((data) => {
-      if (data.body?.is_playing) {
-        spotifyApi.pause();
-        setIsPlaying(false);
-      } else {
-        spotifyApi.play();
-        setIsPlaying(true);
-      }
-    });
-  };
+  const { togglePlayback } = usePlayback();
 
   useEffect(() => {
     if (!session?.user.accessToken || currentTrackId) return;
@@ -89,8 +85,16 @@ export const Player: React.FC<PlayerProps> = ({}) => {
 
   return (
     <div
-      className={`h-20 bg-linear-to-b ${playerStyles.player} text-white grid grid-cols-3 text-sm md:text-base px-2 md:px-8`}
+      className={`relative h-20 bg-linear-to-b ${playerStyles.player} text-white grid grid-cols-3 text-sm md:text-base px-2 md:px-8`}
     >
+      {playbackError && (
+        <p
+          role="alert"
+          className="absolute bottom-full inset-x-0 bg-[#282828] px-4 py-3 text-sm text-white"
+        >
+          {playbackError}
+        </p>
+      )}
       <div className="flex items-center space-x-4">
         <Image
           width={300}
@@ -112,17 +116,19 @@ export const Player: React.FC<PlayerProps> = ({}) => {
       <div className="flex items-center justify-center space-x-5">
         <ArrowsRightLeftIcon className="w-6 h-6 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
         <BackwardIcon className="w-7 h-7 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
-        {isPlaying ? (
-          <PauseIcon
-            className="w-12 h-12 cursor-pointer hover:scale-125 transition transform duration-100 ease-out text-[#18D860]"
-            onClick={handlePlayPause}
-          />
-        ) : (
-          <PlayIcon
-            className="w-12 h-12 cursor-pointer hover:scale-125 transition transform duration-100 ease-out"
-            onClick={handlePlayPause}
-          />
-        )}
+        <button
+          type="button"
+          aria-label={isPlaying ? "Pause playback" : "Resume playback"}
+          disabled={isPlaybackPending}
+          onClick={() => void togglePlayback()}
+          className="disabled:opacity-50"
+        >
+          {isPlaying ? (
+            <PauseIcon className="w-12 h-12 cursor-pointer hover:scale-125 transition transform duration-100 ease-out text-[#18D860]" />
+          ) : (
+            <PlayIcon className="w-12 h-12 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
+          )}
+        </button>
         <ForwardIcon className="w-7 h-7 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
         <ArrowUturnLeftIcon className="w-6 h-6 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
       </div>

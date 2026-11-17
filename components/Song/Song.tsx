@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { useSpotify } from "../../hooks/useSpotify";
-import { useAppStore } from "../../store/AppStore";
+import { usePlayback } from "../../hooks/usePlayback";
 import { milliSecondsToMinutesAndSeconds } from "../../utils/time";
 import songStyles from "./song.module.css";
 
@@ -11,21 +10,14 @@ interface SongProps {
 }
 
 export const Song: React.FC<SongProps> = ({ song, order }) => {
-  const spotifyApi = useSpotify();
-  const { setCurrentTrackId, setIsPlaying } = useAppStore();
-  const playSong = () => {
-    // console.log(song)
-    setCurrentTrackId(song.track.id);
-    setIsPlaying(true);
-    spotifyApi.play({
-      uris: [song.track.uri],
-    });
-  };
+  const { playTrack } = usePlayback();
 
   return (
-    <div
-      onClick={playSong}
-      className={`${songStyles.searchSongIndividual} group grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
+    <button
+      type="button"
+      aria-label={`Play ${song.track.name}`}
+      onClick={() => void playTrack(song.track)}
+      className={`${songStyles.searchSongIndividual} group grid w-full text-left grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
     >
       <div className="flex items-center pl-3 space-x-4 py-1 w-full">
         <p>{order + 1}</p>
@@ -63,6 +55,6 @@ export const Song: React.FC<SongProps> = ({ song, order }) => {
         </p>
         <p>{milliSecondsToMinutesAndSeconds(song?.track.duration_ms)}</p>
       </div>
-    </div>
+    </button>
   );
 };

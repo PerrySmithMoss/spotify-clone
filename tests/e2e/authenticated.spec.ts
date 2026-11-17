@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test as base } from "@playwright/test";
 import { encode } from "next-auth/jwt";
 
 const image = {
@@ -43,77 +43,135 @@ const playlist = {
   followers: { total: 1 },
 };
 
+interface SpotifyFixture {
+  playRequests: string[][];
+  pauseRequests: number;
+  failPlayback: boolean;
+}
+
+const test = base.extend<{ spotify: SpotifyFixture }>({
+  spotify: [
+    async ({ page, context }, use) => {
+      const spotify: SpotifyFixture = {
+        playRequests: [],
+        pauseRequests: 0,
+        failPlayback: false,
+      };
+      let isPlaying = false;
+      const token = await encode({
+        secret: "e2e-only-secret-32-characters-minimum",
+        token: {
+          sub: "fixture-user",
+          name: "Fixture User",
+          picture: image.url,
+          username: "fixture-user",
+          accessToken: "fixture-access",
+          refreshToken: "fixture-private-refresh",
+          accessTokenExpires: Date.now() + 3_600_000,
+        },
+      });
+      await context.addCookies([
+        {
+          name: "next-auth.session-token",
+          value: token,
+          domain: "localhost",
+          path: "/",
+          httpOnly: true,
+          sameSite: "Lax",
+        },
+      ]);
+      await page.route("https://api.spotify.com/**", async (route) => {
+        const url = new URL(route.request().url());
+        const path = url.pathname.replace("/v1", "");
+        const headers = {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, PUT, OPTIONS",
+          "access-control-allow-headers": "authorization, content-type",
+        };
+        if (route.request().method() === "OPTIONS") {
+          await route.fulfill({ status: 204, headers });
+          return;
+        }
+        if (path === "/me/player/play" || path === "/me/player/pause") {
+          if (spotify.failPlayback) {
+            await route.fulfill({
+              status: 404,
+              json: {
+                error: { status: 404, message: "No active device found" },
+              },
+              headers,
+            });
+            return;
+          }
+          isPlaying = path.endsWith("/play");
+          if (isPlaying)
+            spotify.playRequests.push(
+              route.request().postDataJSON()?.uris ?? [],
+            );
+          else spotify.pauseRequests++;
+          await route.fulfill({ status: 204, headers });
+          return;
+        }
+        let data: unknown = { items: [] };
+        if (path === "/me/playlists") data = { items: [playlist] };
+        else if (path === "/me/top/artists") data = { items: [artist] };
+        else if (path === "/me/top/tracks") data = { items: [track] };
+        else if (path === "/me/player/currently-playing")
+          data = { item: track, is_playing: isPlaying };
+        else if (path === "/me/player")
+          data = {
+            item: track,
+            is_playing: isPlaying,
+            device: { volume_percent: 50 },
+          };
+        else if (path === "/me/albums") data = { items: [{ album }] };
+        else if (path === "/me/following")
+          data = { artists: { items: [artist] } };
+        else if (path === "/playlists/playlist") data = playlist;
+        else if (path === "/albums/album")
+          data = { ...album, tracks: { items: [track], total: 1 } };
+        else if (path === "/artists/artist") data = artist;
+        else if (path === "/artists/artist/albums") data = { items: [album] };
+        else if (path === "/artists/artist/top-tracks")
+          data = { tracks: [track] };
+        else if (path === "/artists/artist/related-artists")
+          data = { artists: [artist] };
+        else if (path === "/tracks/track") data = track;
+        else if (
+          path === "/search" &&
+          url.searchParams.get("q") === "no-results"
+        )
+          data = {
+            tracks: { items: [] },
+            artists: { items: [] },
+            albums: { items: [] },
+            playlists: { items: [] },
+            shows: { items: [] },
+          };
+        else if (path === "/search")
+          data = {
+            tracks: { items: [track] },
+            artists: { items: [artist] },
+            albums: { items: [album] },
+            playlists: { items: [playlist] },
+            shows: { items: [] },
+          };
+        await route.fulfill({
+          json: data,
+          headers,
+        });
+      });
+      await use(spotify);
+    },
+    { auto: true },
+  ],
+});
+
 test("authenticated dashboard, search, library and deep links work with Spotify fixtures", async ({
   page,
-  context,
 }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const token = await encode({
-    secret: "e2e-only-secret-32-characters-minimum",
-    token: {
-      sub: "fixture-user",
-      name: "Fixture User",
-      picture: image.url,
-      username: "fixture-user",
-      accessToken: "fixture-access",
-      refreshToken: "fixture-private-refresh",
-      accessTokenExpires: Date.now() + 3_600_000,
-    },
-  });
-  await context.addCookies([
-    {
-      name: "next-auth.session-token",
-      value: token,
-      domain: "localhost",
-      path: "/",
-      httpOnly: true,
-      sameSite: "Lax",
-    },
-  ]);
-  await page.route("https://api.spotify.com/**", async (route) => {
-    const url = new URL(route.request().url());
-    const path = url.pathname.replace("/v1", "");
-    let data: unknown = { items: [] };
-    if (path === "/me/playlists") data = { items: [playlist] };
-    else if (path === "/me/top/artists") data = { items: [artist] };
-    else if (path === "/me/top/tracks") data = { items: [track] };
-    else if (path === "/me/player/currently-playing")
-      data = { item: track, is_playing: false };
-    else if (path === "/me/player")
-      data = { item: track, is_playing: false, device: { volume_percent: 50 } };
-    else if (path === "/me/albums") data = { items: [{ album }] };
-    else if (path === "/me/following") data = { artists: { items: [artist] } };
-    else if (path === "/playlists/playlist") data = playlist;
-    else if (path === "/albums/album")
-      data = { ...album, tracks: { items: [track], total: 1 } };
-    else if (path === "/artists/artist") data = artist;
-    else if (path === "/artists/artist/albums") data = { items: [album] };
-    else if (path === "/artists/artist/top-tracks") data = { tracks: [track] };
-    else if (path === "/artists/artist/related-artists")
-      data = { artists: [artist] };
-    else if (path === "/tracks/track") data = track;
-    else if (path === "/search" && url.searchParams.get("q") === "no-results")
-      data = {
-        tracks: { items: [] },
-        artists: { items: [] },
-        albums: { items: [] },
-        playlists: { items: [] },
-        shows: { items: [] },
-      };
-    else if (path === "/search")
-      data = {
-        tracks: { items: [track] },
-        artists: { items: [artist] },
-        albums: { items: [album] },
-        playlists: { items: [playlist] },
-        shows: { items: [] },
-      };
-    await route.fulfill({
-      json: data,
-      headers: { "access-control-allow-origin": "*" },
-    });
-  });
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Fixture User" }),
@@ -153,6 +211,81 @@ test("authenticated dashboard, search, library and deep links work with Spotify 
   await page.goto("/collections/artists");
   await expect(
     page.getByText("Fixture Artist", { exact: true }).first(),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("album, artist and playlist tracks send valid playback commands and can pause/resume", async ({
+  page,
+  spotify,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const path of ["/album/album", "/artist/artist", "/playlist/playlist"]) {
+    await page.goto(path);
+    const previousRequests = spotify.playRequests.length;
+    await page
+      .getByRole("button", { name: "Play Fixture Song", exact: true })
+      .first()
+      .click();
+    await expect
+      .poll(() => spotify.playRequests.length)
+      .toBe(previousRequests + 1);
+    await expect(
+      page.getByRole("button", { name: "Pause playback", exact: true }),
+    ).toBeVisible();
+    expect(spotify.playRequests.at(-1)).toEqual(["spotify:track:track"]);
+    await page
+      .getByRole("button", { name: "Pause playback", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Resume playback", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Resume playback", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Pause playback", exact: true }),
+    ).toBeVisible();
+    expect(spotify.playRequests.at(-1)).toEqual([]);
+  }
+  expect(spotify.pauseRequests).toBe(3);
+  expect(spotify.playRequests).toHaveLength(6);
+  expect(errors).toEqual([]);
+});
+
+test("rejected playback commands show a device error and preserve the playback state", async ({
+  page,
+  spotify,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/album/album");
+  spotify.failPlayback = true;
+  await page
+    .getByRole("button", { name: "Play Fixture Song", exact: true })
+    .click();
+  await expect(page.getByRole("alert").filter({ hasText: "Open Spotify on a device" })).toHaveText(
+    "Open Spotify on a device and start a song, then try again.",
+  );
+  await expect(
+    page.getByRole("button", { name: "Resume playback", exact: true }),
+  ).toBeVisible();
+  spotify.failPlayback = false;
+  await page
+    .getByRole("button", { name: "Play Fixture Song", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Pause playback", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("alert").filter({ hasText: "Open Spotify on a device" })).toHaveCount(0);
+  spotify.failPlayback = true;
+  await page
+    .getByRole("button", { name: "Pause playback", exact: true })
+    .click();
+  await expect(page.getByRole("alert").filter({ hasText: "Open Spotify on a device" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Pause playback", exact: true }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

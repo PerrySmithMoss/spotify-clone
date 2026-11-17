@@ -1,31 +1,25 @@
 import Image from "next/image";
 import React from "react";
-import { useSpotify } from "../../../hooks/useSpotify";
-import { useAppStore } from "../../../store/AppStore";
+import { usePlayback } from "../../../hooks/usePlayback";
 import { milliSecondsToMinutesAndSeconds } from "../../../utils/time";
 import albumStyles from "./album.module.css";
 
 interface SongProps {
-  song: any;
-  order: any;
+  song: SpotifyApi.TrackObjectSimplified & {
+    album?: SpotifyApi.AlbumObjectSimplified;
+  };
+  order: number;
 }
 
 export const AlbumTracks: React.FC<SongProps> = ({ song, order }) => {
-  const spotifyApi = useSpotify();
-  const { setCurrentTrackId, setIsPlaying } = useAppStore();
-  const playSong = () => {
-    // console.log(song)
-    setCurrentTrackId(song.track.id);
-    setIsPlaying(true);
-    spotifyApi.play({
-      uris: [song.track.uri],
-    });
-  };
+  const { playTrack } = usePlayback();
 
   return (
-    <div
-      onClick={playSong}
-      className={`${albumStyles.searchSongIndividual} group grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
+    <button
+      type="button"
+      aria-label={`Play ${song.name}`}
+      onClick={() => void playTrack(song)}
+      className={`${albumStyles.searchSongIndividual} group grid w-full text-left grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
     >
       <div className="flex items-center pl-3 py-1 w-full">
         <p>{order + 1}</p>
@@ -38,7 +32,7 @@ export const AlbumTracks: React.FC<SongProps> = ({ song, order }) => {
             src={
               song?.album?.images[0]?.url || "/assets/images/placeholder.svg"
             }
-            alt={song?.album?.name}
+            alt={song.album?.name ?? ""}
           />
           <div className={`${albumStyles.searchPlayButtton} `}>
             <svg height={22} width={22} viewBox="0 0 24 24" fill="white">
@@ -58,6 +52,6 @@ export const AlbumTracks: React.FC<SongProps> = ({ song, order }) => {
         <p className="hidden md:inline w-40 lg:w-96 truncate">{song?.name}</p>
         <p>{milliSecondsToMinutesAndSeconds(song?.duration_ms)}</p>
       </div>
-    </div>
+    </button>
   );
 };
