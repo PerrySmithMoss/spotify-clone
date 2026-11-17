@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { colourFor } from "../../../constants/colors";
 import { useSpotify } from "../../../hooks/useSpotify";
+import { usePlayback } from "../../../hooks/usePlayback";
 import { useAppStore } from "../../../store/AppStore";
 import { milliSecondsToMinutesAndSeconds } from "../../../utils/time";
 import collectionStyles from "./collection.module.css";
@@ -17,14 +18,12 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
   const spotifyAPI = useSpotify();
   const router = useRouter();
   const [usersTopTracks, setUsersTopTracks] = useState<any[]>([]);
-  const spotifyApi = useSpotify();
+  const { playTrack } = usePlayback();
   const {
     libraryCollectionSelected: storedCollection,
     selectedPlaylistId,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
-    setCurrentTrackId,
-    setIsPlaying,
   } = useAppStore();
   const libraryCollectionSelected =
     typeof router.query.collection === "string"
@@ -43,15 +42,6 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
         .catch((err) => console.log("Something went wrong: ", err));
     }
   }, [spotifyAPI, libraryCollectionSelected]);
-
-  const playSong = (id: string, uri: string) => {
-    // console.log(song)
-    setCurrentTrackId(id);
-    setIsPlaying(true);
-    spotifyApi.play({
-      uris: [uri],
-    });
-  };
 
   return (
     <div className="grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
@@ -173,7 +163,7 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
           {usersTopTracks?.map((song: any, i: number) => (
             <div
               key={i}
-              onClick={() => playSong(song.id, song.uri)}
+              onClick={() => void playTrack(song)}
               className={`${collectionStyles.searchSongIndividual} group grid grid-cols-2 text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
             >
               <div className="flex items-center pl-3 space-x-4 py-1 w-full">

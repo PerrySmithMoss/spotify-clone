@@ -26,6 +26,10 @@ interface State {
   setSelectedAlbum: (album: any) => void;
   isPlaying: boolean;
   setIsPlaying: (prev: boolean) => void;
+  playbackError: string | undefined;
+  setPlaybackError: (error: string | undefined) => void;
+  isPlaybackPending: boolean;
+  setPlaybackPending: (pending: boolean) => void;
   libraryCollectionSelected:
     "playlists" | "podcasts" | "artists" | "albums" | "tracks";
   setLibraryCollectionSelected: (
@@ -61,6 +65,11 @@ export const useAppStore = create<State>()(
     setSelectedAlbum: (album) => set(() => ({ selectedAlbum: album })),
     isPlaying: false,
     setIsPlaying: (value) => set(() => ({ isPlaying: value })),
+    playbackError: undefined,
+    setPlaybackError: (error) => set(() => ({ playbackError: error })),
+    isPlaybackPending: false,
+    setPlaybackPending: (pending) =>
+      set(() => ({ isPlaybackPending: pending })),
     libraryCollectionSelected: "playlists",
     setLibraryCollectionSelected: (value) =>
       set(() => ({ libraryCollectionSelected: value })),

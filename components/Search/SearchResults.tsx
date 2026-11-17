@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
-import { useSpotify } from "../../hooks/useSpotify";
+import { usePlayback } from "../../hooks/usePlayback";
 import { useAppStore } from "../../store/AppStore";
 import { milliSecondsToMinutesAndSeconds } from "../../utils/time";
 import searchStyles from "./search.module.css";
@@ -21,20 +21,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     setSelectedPodcastId,
   } = useAppStore();
   const router = useRouter();
-  const spotifyApi = useSpotify();
-  const { setCurrentTrackId, setIsPlaying } = useAppStore();
-
-  const playSong = (song: any) => {
-    setCurrentTrackId(song.id);
-    setIsPlaying(true);
-    spotifyApi
-      .play({
-        uris: [song.uri],
-      })
-      .catch((err) => {
-        console.log("There was an error while trying to play song: ", err);
-      });
-  };
+  const { playTrack } = usePlayback();
 
   const handleSelectPlaylist = (id: string) => {
     setSelectedPlaylistId(id);
@@ -97,7 +84,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           <div className="mt-9">
             {searchResults.tracks.items.slice(0, 4).map((song: any) => (
               <div
-                onClick={() => playSong(song)}
+                onClick={() => void playTrack(song)}
                 key={song.id}
                 className={`${searchStyles.searchSongIndividual} group flex w-full group text-[#b3b3b3] hover:text-white hover:bg-[#282828] rounded-sm  cursor-pointer`}
               >

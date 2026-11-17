@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { useSpotify } from "../../../hooks/useSpotify";
-import { useAppStore } from "../../../store/AppStore";
+import { usePlayback } from "../../../hooks/usePlayback";
 import { convertMsToHM } from "../../../utils/time";
 import { trimString } from "../../../utils/trimString";
 import podcastStyles from "./podcast.module.css";
@@ -11,29 +10,12 @@ interface PodcastEpisodeProps {
 }
 
 export const PodcastEpisode: React.FC<PodcastEpisodeProps> = ({ episode }) => {
-  const spotifyApi = useSpotify();
-  const { setCurrentTrackId, setIsPlaying } = useAppStore();
-  const playEpisode = () => {
-    // console.log(song)
-    setCurrentTrackId(episode.id);
-    setIsPlaying(true);
-    spotifyApi
-      .play({
-        uris: [episode.uri],
-      })
-      .catch((err) => {
-        console.error(
-          "Something went wrong when trying to play song/episode: ",
-          err,
-        );
-      });
-  };
-  //   console.log(episode);
+  const { playTrack } = usePlayback();
   return (
     <>
       <hr className={`${podcastStyles.border} mt-4 mb-4`} />
       <div
-        onClick={playEpisode}
+        onClick={() => void playTrack(episode)}
         className={`text-[#b3b3b3] hover:text-white  hover:bg-[#282828] rounded-md mt-1 cursor-pointer`}
       >
         <div className="flex items-center space-x-4 p-1 w-full">
