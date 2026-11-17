@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { Podcast } from "../../components/Main/Podcast/Podcast";
+import { Player } from "../../components/Player/Player";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { useAppStore } from "../../store/AppStore";
-import { Player } from "../../components/Player/Player";
-import { Podcast } from "../../components/Main/Podcast/Podcast";
 
 const IndividualPodcast: NextPage = () => {
-  const { selectedPodcastId, selectedPodcast } = useAppStore();
+  const { selectedPodcast } = useAppStore();
 
   return (
     <div className="bg-spotify-black h-screen overflow-hidden">
@@ -17,7 +17,7 @@ const IndividualPodcast: NextPage = () => {
       </Head>
       <main className="flex">
         <Sidebar />
-        {selectedPodcastId && selectedPodcastId !== undefined && <Podcast />}
+        <Podcast />
       </main>
       <div className="sticky bottom-0">
         <Player />

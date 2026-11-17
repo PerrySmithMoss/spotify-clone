@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import {
-  HeartIcon,
-  HomeIcon,
-  LibraryIcon,
-  LogoutIcon,
-  PlusCircleIcon,
-  SearchIcon,
-} from "@heroicons/react/outline";
-import { signOut, useSession } from "next-auth/react";
-import { useAppStore } from "../../store/AppStore";
-import { useSpotify } from "../../hooks/useSpotify";
 import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import { useSpotify } from "../../hooks/useSpotify";
+import { useAppStore } from "../../store/AppStore";
 import sidebarStyles from "./sidebar.module.css";
 
 interface SidebarProps {}
@@ -19,15 +11,11 @@ interface SidebarProps {}
 export const Sidebar: React.FC<SidebarProps> = ({}) => {
   const spotifyAPI = useSpotify();
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   // const [playlists, setPlaylists] = useState<any>([]);
-  const [song, setSong] = useState<any>();
   const {
     setSelectedPlaylistId,
-    selectedPlaylistId,
     userPlaylists,
-    selectedPlaylist,
-    setSelectedPlaylist,
     setLibraryCollectionSelected,
     setUserPlaylists,
   } = useAppStore();
@@ -38,7 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
         setUserPlaylists(data.body.items);
       });
     }
-  }, [session, spotifyAPI]);
+  }, [session, spotifyAPI, setUserPlaylists]);
 
   const handleSelectPlaylist = (id: string) => {
     setSelectedPlaylistId(id);
@@ -72,68 +60,65 @@ export const Sidebar: React.FC<SidebarProps> = ({}) => {
       </div>
       <div className="text-gray-500 p-5 mt-1 text-sm border-r border-black overflow-y-scroll h-screen scrollbar-hide sm:w-[12rem] lg:w-[15rem] hidden md:inline-flex ">
         <div className="space-y-4 w-full ml-0">
-          <Link href={`/`}>
-            <button
-              className={
-                router.pathname === "/"
-                  ? `flex items-center space-x-2 text-white`
-                  : `flex items-center space-x-2 hover:text-white`
-              }
+          <Link
+            href={`/`}
+            className={
+              router.pathname === "/"
+                ? `flex items-center space-x-2 text-white`
+                : `flex items-center space-x-2 hover:text-white`
+            }
+          >
+            <svg
+              height={24}
+              width={24}
+              viewBox="0 0 24 24"
+              className=" shrink-0"
+              fill="#b3b3b3"
             >
-              <svg
-                height={24}
-                width={24}
-                viewBox="0 0 24 24"
-                className=" shrink-0"
-                fill="#b3b3b3"
-              >
-                <path d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z"></path>
-              </svg>
-              <p>Home</p>
-            </button>
+              <path d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z"></path>
+            </svg>
+            <p>Home</p>
           </Link>
-          <Link href="/search">
-            <button
-              className={
-                router.pathname === "/search"
-                  ? `flex items-center space-x-2 text-white`
-                  : `flex items-center space-x-2 hover:text-white`
-              }
+          <Link
+            href="/search"
+            className={
+              router.pathname === "/search"
+                ? `flex items-center space-x-2 text-white`
+                : `flex items-center space-x-2 hover:text-white`
+            }
+          >
+            <svg
+              height={24}
+              width={24}
+              viewBox="0 0 24 24"
+              className=" shrink-0"
+              fill="#b3b3b3"
             >
-              <svg
-                height={24}
-                width={24}
-                viewBox="0 0 24 24"
-                className=" shrink-0"
-                fill="#b3b3b3"
-              >
-                <path d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 101.414-1.414l-4.344-4.344a9.157 9.157 0 002.077-5.816c0-5.14-4.226-9.28-9.407-9.28zm-7.407 9.279c0-4.006 3.302-7.28 7.407-7.28s7.407 3.274 7.407 7.28-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.28z"></path>
-              </svg>
-              <p>Search</p>
-            </button>
+              <path d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 101.414-1.414l-4.344-4.344a9.157 9.157 0 002.077-5.816c0-5.14-4.226-9.28-9.407-9.28zm-7.407 9.279c0-4.006 3.302-7.28 7.407-7.28s7.407 3.274 7.407 7.28-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.28z"></path>
+            </svg>
+            <p>Search</p>
           </Link>
-          <Link href={`/collections/playlists`}>
-            <button
-              className={
-                router.asPath === "/collections/playlists" ||
-                router.asPath === "/collections/podcasts" ||
-                router.asPath === "/collections/artists" ||
-                router.asPath === "/collections/albums"
-                  ? `flex items-center space-x-2 text-white`
-                  : `flex items-center space-x-2 hover:text-white`
-              }
+          <Link
+            href={`/collections/playlists`}
+            className={
+              router.asPath === "/collections/playlists" ||
+              router.asPath === "/collections/podcasts" ||
+              router.asPath === "/collections/artists" ||
+              router.asPath === "/collections/albums"
+                ? `flex items-center space-x-2 text-white`
+                : `flex items-center space-x-2 hover:text-white`
+            }
+          >
+            <svg
+              height={24}
+              width={24}
+              viewBox="0 0 24 24"
+              className=" shrink-0"
+              fill="#b3b3b3"
             >
-              <svg
-                height={24}
-                width={24}
-                viewBox="0 0 24 24"
-                className=" shrink-0"
-                fill="#b3b3b3"
-              >
-                <path d="M14.5 2.134a1 1 0 011 0l6 3.464a1 1 0 01.5.866V21a1 1 0 01-1 1h-6a1 1 0 01-1-1V3a1 1 0 01.5-.866zM16 4.732V20h4V7.041l-4-2.309zM3 22a1 1 0 01-1-1V3a1 1 0 012 0v18a1 1 0 01-1 1zm6 0a1 1 0 01-1-1V3a1 1 0 012 0v18a1 1 0 01-1 1z"></path>
-              </svg>
-              <p>Your Library</p>
-            </button>
+              <path d="M14.5 2.134a1 1 0 011 0l6 3.464a1 1 0 01.5.866V21a1 1 0 01-1 1h-6a1 1 0 01-1-1V3a1 1 0 01.5-.866zM16 4.732V20h4V7.041l-4-2.309zM3 22a1 1 0 01-1-1V3a1 1 0 012 0v18a1 1 0 01-1 1zm6 0a1 1 0 01-1-1V3a1 1 0 012 0v18a1 1 0 01-1 1z"></path>
+            </svg>
+            <p>Your Library</p>
           </Link>
 
           {/* <button className="flex items-center pt-4 space-x-2 hover:text-white">

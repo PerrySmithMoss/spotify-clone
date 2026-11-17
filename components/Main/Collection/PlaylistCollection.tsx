@@ -1,19 +1,13 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { colours } from "../../../constants/colors";
 import { useSpotify } from "../../../hooks/useSpotify";
-import {
-  milliSecondsToHours,
-  milliSecondsToMinutesAndSeconds,
-} from "../../../utils/time";
 import { useAppStore } from "../../../store/AppStore";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
 // import { Songs } from "../Song/Songs";
-import { ClockIcon } from "@heroicons/react/outline";
-import collectionStyles from "./collection.module.css";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import collectionStyles from "./collection.module.css";
 
 interface PlaylistCollectionProps {}
 
@@ -21,10 +15,9 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
   const { data: session } = useSession();
   const spotifyAPI = useSpotify();
   const router = useRouter();
-  const [colour, setColour] = useState<any>(null);
   const [usersTopTracks, setUsersTopTracks] = useState<any[]>([]);
   const {
-    libraryCollectionSelected,
+    libraryCollectionSelected: storedCollection,
     setLibraryCollectionSelected,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
@@ -32,10 +25,10 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
     setUserPlaylists,
     setSelectedPlaylistId,
   } = useAppStore();
-
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [libraryCollectionSelected]);
+  const libraryCollectionSelected =
+    typeof router.query.collection === "string"
+      ? router.query.collection
+      : storedCollection;
 
   useEffect(() => {
     if (libraryCollectionSelected === "playlists") {
@@ -46,7 +39,7 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }
-  }, [spotifyAPI, libraryCollectionSelected]);
+  }, [spotifyAPI, libraryCollectionSelected, setUserPlaylists]);
 
   useEffect(() => {
     if (typeof libraryCollectionSelected === "string") {
@@ -64,14 +57,14 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
   };
 
   const handleCollectionChange = (
-    collection: "playlists" | "podcasts" | "artists" | "albums"
+    collection: "playlists" | "podcasts" | "artists" | "albums",
   ) => {
     setLibraryCollectionSelected(collection);
     router.push(`/collections/${collection}`);
   };
 
   return (
-    <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -152,9 +145,16 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -220,9 +220,15 @@ export const PlaylistCollection: React.FC<PlaylistCollectionProps> = ({}) => {
                     <div className=" relative mb-4">
                       <div className={collectionStyles.playlistImage}>
                         <div>
-                          <img
+                          <Image
+                            width={300}
+                            height={300}
+                            sizes="(max-width: 768px) 50vw, 240px"
                             className={`h-full left-0 absolute top-0 w-full block ${collectionStyles.cardImage}`}
-                            src={playlist.images[0].url}
+                            src={
+                              playlist.images[0].url ||
+                              "/assets/images/placeholder.svg"
+                            }
                             alt={playlist.name}
                           />
                         </div>

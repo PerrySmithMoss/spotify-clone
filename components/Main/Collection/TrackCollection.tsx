@@ -1,18 +1,14 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ClockIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import { colours } from "../../../constants/colors";
-import { useSpotify } from "../../../hooks/useSpotify";
-import {
-  milliSecondsToHours,
-  milliSecondsToMinutesAndSeconds,
-} from "../../../utils/time";
-import { useAppStore } from "../../../store/AppStore";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
-import { Songs } from "../../Song/Songs";
-import { ClockIcon } from "@heroicons/react/outline";
-import collectionStyles from "./collection.module.css";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { colourFor } from "../../../constants/colors";
+import { useSpotify } from "../../../hooks/useSpotify";
+import { useAppStore } from "../../../store/AppStore";
+import { milliSecondsToMinutesAndSeconds } from "../../../utils/time";
+import collectionStyles from "./collection.module.css";
 
 interface TrackCollectionProps {}
 
@@ -20,21 +16,22 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
   const { data: session } = useSession();
   const spotifyAPI = useSpotify();
   const router = useRouter();
-  const [colour, setColour] = useState<any>(null);
   const [usersTopTracks, setUsersTopTracks] = useState<any[]>([]);
   const spotifyApi = useSpotify();
   const {
-    libraryCollectionSelected,
+    libraryCollectionSelected: storedCollection,
     selectedPlaylistId,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
     setCurrentTrackId,
     setIsPlaying,
   } = useAppStore();
+  const libraryCollectionSelected =
+    typeof router.query.collection === "string"
+      ? router.query.collection
+      : storedCollection;
 
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [selectedPlaylistId]);
+  const colour = colourFor(String(selectedPlaylistId ?? ""));
 
   useEffect(() => {
     if (libraryCollectionSelected === "tracks") {
@@ -57,7 +54,7 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
   };
 
   return (
-    <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -84,9 +81,15 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -110,9 +113,12 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
       )}
       {usersTopTracks && (
         <section
-          className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
+          className={`flex items-end space-x-7 bg-linear-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
         >
-          <img
+          <Image
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="w-56 h-56 shadow-2xl"
             src="/assets/images/liked-songs.png"
             alt="Liked Songs"
@@ -126,9 +132,15 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
             </h1>
             <div className="flex content-center items-center text-sm space-x-1 mt-5">
               <div>
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-full w-6 h-6 mr-1 text-white"
-                  src={session?.user?.image}
+                  src={
+                    (session?.user?.image ?? undefined) ||
+                    "/assets/images/placeholder.svg"
+                  }
                   alt="Users Profile Picture"
                 />
               </div>
@@ -167,9 +179,15 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
               <div className="flex items-center pl-3 space-x-4 py-1 w-full">
                 <p>{i + 1}</p>
                 <div className="relative">
-                  <img
+                  <Image
+                    width={300}
+                    height={300}
+                    sizes="(max-width: 768px) 50vw, 240px"
                     className="h-auto w-10 group-hover:opacity-30"
-                    src={song?.album?.images[0]?.url}
+                    src={
+                      song?.album?.images[0]?.url ||
+                      "/assets/images/placeholder.svg"
+                    }
                     alt={song?.album?.name}
                   />
                   <div className={`${collectionStyles.searchPlayButtton} `}>
@@ -197,9 +215,7 @@ export const TrackCollection: React.FC<TrackCollectionProps> = ({}) => {
                 <p className="hidden md:inline w-40 lg:w-96 truncate">
                   {song.album.name}
                 </p>
-                <p>
-                  {milliSecondsToMinutesAndSeconds(song?.duration_ms)}
-                </p>
+                <p>{milliSecondsToMinutesAndSeconds(song?.duration_ms)}</p>
               </div>
             </div>
           ))}

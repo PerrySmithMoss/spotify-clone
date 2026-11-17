@@ -1,39 +1,28 @@
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { colours } from "../../constants/colors";
-import { shuffleArrayOfStrings } from "../../utils/shuffleArray";
+import { colourFor } from "../../constants/colors";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useAppStore } from "../../store/AppStore";
-import Link from "next/link";
 import dashboardStyles from "./dashboard.module.css";
-import { useRouter } from "next/router";
 
 interface DashboardProps {}
 
 export const Dashboard: React.FC<DashboardProps> = ({}) => {
   const { data: session } = useSession();
-  const [colour, setColour] = useState<any>(null);
   const router = useRouter();
   const spotifyAPI = useSpotify();
-  const { userPlaylists, setUserPlaylists } = useAppStore();
+  const { userPlaylists } = useAppStore();
   const [usersTopArtists, setUsersTopArtists] = useState<object[]>([]);
   const [usersTopSongs, setUsersTopSongs] = useState<object[]>([]);
   const [usersSavedShows, setUsersSavedShows] = useState<object[]>([]);
-  const {
-    selectedPlaylistId,
-    setSelectedPlaylistId,
-    isProfileDrodownOpen,
-    setIsProfileDrodownOpen,
-  } = useAppStore();
+  const { selectedPlaylistId, isProfileDrodownOpen, setIsProfileDrodownOpen } =
+    useAppStore();
 
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [selectedPlaylistId]);
+  const colour = colourFor(String(selectedPlaylistId ?? ""));
 
   useEffect(() => {
     if (spotifyAPI.getAccessToken()) {
@@ -59,7 +48,7 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
     }
   }, [spotifyAPI]);
   return (
-    <div className="flex-grow bg-spotify-gray  h-screen overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow bg-spotify-gray  h-screen overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -86,9 +75,16 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -111,12 +107,12 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
         </div>
       )}
       <section
-        className={`px-10 bg-gradient-to-b to-spotify-gray ${colour}  h-40 text-white border-spotify-black `}
+        className={`px-10 bg-linear-to-b to-spotify-gray ${colour}  h-40 text-white border-spotify-black `}
       >
         <h1 className="mt-10 text-white text-xl md:text-2xl lg:text-3xl font-bold">
           Good afternoon
         </h1>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 mt-8">
           {userPlaylists.map((playlist: any) => (
             <Link key={playlist.id} href={`/playlist/${playlist.id}`}>
               <div
@@ -126,9 +122,15 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
               >
                 <div className="flex content-center items-center w-full">
                   <div className="h-24 w-28 pr-4">
-                    <img
+                    <Image
+                      width={300}
+                      height={300}
+                      sizes="(max-width: 768px) 50vw, 240px"
                       className="h-full w-full rounded-l"
-                      src={playlist.images[0].url}
+                      src={
+                        playlist.images[0].url ||
+                        "/assets/images/placeholder.svg"
+                      }
                       alt={playlist.name}
                     />
                   </div>
@@ -158,9 +160,12 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           {usersTopArtists.map((artist: any) => (
             <div key={artist.id}>
               <div>
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-sm h-52 w-52 "
-                  src={artist.images[0].url}
+                  src={artist.images[0].url || "/assets/images/placeholder.svg"}
                   alt={artist.name}
                 />
               </div>
@@ -188,9 +193,14 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           {usersTopSongs.map((song: any) => (
             <div key={song.id}>
               <div>
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-sm h-52 w-52 "
-                  src={song.album.images[0].url}
+                  src={
+                    song.album.images[0].url || "/assets/images/placeholder.svg"
+                  }
                   alt={song.name}
                 />
               </div>
@@ -218,9 +228,14 @@ export const Dashboard: React.FC<DashboardProps> = ({}) => {
           {usersSavedShows.map((show: any) => (
             <div key={show.show.id}>
               <div>
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-sm h-52 w-52 "
-                  src={show.show.images[0].url}
+                  src={
+                    show.show.images[0].url || "/assets/images/placeholder.svg"
+                  }
                   alt={show.show.name}
                 />
               </div>

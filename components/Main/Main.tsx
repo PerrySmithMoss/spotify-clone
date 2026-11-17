@@ -1,18 +1,15 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ClockIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import { colours } from "../../constants/colors";
-import { useSpotify } from "../../hooks/useSpotify";
-import {
-  milliSecondsToHours,
-  milliSecondsToMinutesAndSeconds,
-} from "../../utils/time";
-import { useAppStore } from "../../store/AppStore";
-import { shuffleArrayOfStrings } from "../../utils/shuffleArray";
-import { Songs } from "../Song/Songs";
-import { ClockIcon } from "@heroicons/react/outline";
-import mainStyles from "./main.module.css";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import { colourFor } from "../../constants/colors";
+import { useSpotify } from "../../hooks/useSpotify";
+import { useAppStore } from "../../store/AppStore";
+import { milliSecondsToHours } from "../../utils/time";
+import { Songs } from "../Song/Songs";
+import mainStyles from "./main.module.css";
 
 interface MainProps {}
 
@@ -20,19 +17,17 @@ export const Main: React.FC<MainProps> = ({}) => {
   const { data: session } = useSession();
   const spotifyAPI = useSpotify();
   const router = useRouter();
-  const [colour, setColour] = useState<any>(null);
   const {
-    setSelectedPlaylistId,
-    selectedPlaylistId,
+    selectedPlaylistId: storedId,
     selectedPlaylist,
     setSelectedPlaylist,
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
   } = useAppStore();
+  const selectedPlaylistId =
+    typeof router.query.id === "string" ? router.query.id : storedId;
 
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [selectedPlaylistId]);
+  const colour = colourFor(String(selectedPlaylistId ?? ""));
 
   useEffect(() => {
     if (typeof selectedPlaylistId === "string") {
@@ -43,9 +38,9 @@ export const Main: React.FC<MainProps> = ({}) => {
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }
-  }, [spotifyAPI, selectedPlaylistId]);
+  }, [spotifyAPI, selectedPlaylistId, setSelectedPlaylist]);
   return (
-    <div className="flex-grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -72,9 +67,16 @@ export const Main: React.FC<MainProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -98,11 +100,17 @@ export const Main: React.FC<MainProps> = ({}) => {
       )}
       {selectedPlaylist && (
         <section
-          className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
+          className={`flex items-end space-x-7 bg-linear-to-b to-spotify-gray ${colour} h-[290px] text-white pl-7 pb-5`}
         >
-          <img
+          <Image
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="w-56 h-56 shadow-2xl"
-            src={selectedPlaylist?.images[0]?.url}
+            src={
+              selectedPlaylist?.images[0]?.url ||
+              "/assets/images/placeholder.svg"
+            }
             alt="Playlist picture"
           />
           <div>
@@ -115,7 +123,9 @@ export const Main: React.FC<MainProps> = ({}) => {
             <div className="flex content-center items-center text-sm space-x-1 mt-5">
               <div>
                 <p className="font-medium tracking-wide">
-                  {selectedPlaylist?.owner?.display_name ? selectedPlaylist?.owner?.display_name : session?.user?.name}
+                  {selectedPlaylist?.owner?.display_name
+                    ? selectedPlaylist?.owner?.display_name
+                    : session?.user?.name}
                 </p>
               </div>
               <div>•</div>
@@ -137,8 +147,8 @@ export const Main: React.FC<MainProps> = ({}) => {
                     selectedPlaylist.tracks.items.reduce(
                       (acc: any, currentSong: any) =>
                         acc + currentSong.track.duration_ms,
-                      0
-                    )
+                      0,
+                    ),
                   )}{" "}
                   hr
                 </span>

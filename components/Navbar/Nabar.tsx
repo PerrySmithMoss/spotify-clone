@@ -1,6 +1,5 @@
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 import navbarStyles from "./navbar.module.css";
 
 interface NabarProps {}
@@ -26,7 +25,7 @@ export const Nabar: React.FC<NabarProps> = ({}) => {
           </span>
         </div>
         <nav className="flex">
-          <div className="hidden largeTablet:block">
+          <div className="hidden large-tablet:block">
             <ul className="text-white font-medium flex space-x-9">
               <li className="cursor-pointer hover:text-spotify-green">
                 Premium

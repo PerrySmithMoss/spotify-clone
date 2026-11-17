@@ -31,9 +31,16 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
+
+# browser test artifacts
+/playwright-report/
+/test-results/
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
+.env*
+!.env.example

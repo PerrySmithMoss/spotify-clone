@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 interface State {
@@ -26,44 +26,43 @@ interface State {
   setSelectedAlbum: (album: any) => void;
   isPlaying: boolean;
   setIsPlaying: (prev: boolean) => void;
-  libraryCollectionSelected: "playlists" | "podcasts" | "artists" | "albums" | "tracks";
+  libraryCollectionSelected:
+    "playlists" | "podcasts" | "artists" | "albums" | "tracks";
   setLibraryCollectionSelected: (
-    prev: "playlists" | "podcasts" | "artists" | "albums" | "tracks"
+    prev: "playlists" | "podcasts" | "artists" | "albums" | "tracks",
   ) => void;
 }
 
-export const useAppStore = create<State>(
+export const useAppStore = create<State>()(
   devtools((set) => ({
     isProfileDrodownOpen: false,
     setIsProfileDrodownOpen: (value) =>
-      set((state) => ({ isProfileDrodownOpen: value })),
+      set(() => ({ isProfileDrodownOpen: value })),
     userPlaylists: [],
-    setUserPlaylists: (playlist) =>
-      set((state) => ({ userPlaylists: playlist })),
+    setUserPlaylists: (playlist) => set(() => ({ userPlaylists: playlist })),
     selectedPlaylistId: undefined,
-    setSelectedPlaylistId: (id) => set((state) => ({ selectedPlaylistId: id })),
+    setSelectedPlaylistId: (id) => set(() => ({ selectedPlaylistId: id })),
     selectedPlaylist: undefined,
     setSelectedPlaylist: (playlist) =>
-      set((state) => ({ selectedPlaylist: playlist })),
+      set(() => ({ selectedPlaylist: playlist })),
     currentTrackId: undefined,
-    setCurrentTrackId: (id) => set((state) => ({ currentTrackId: id })),
+    setCurrentTrackId: (id) => set(() => ({ currentTrackId: id })),
     selectedArtistId: undefined,
-    setSelectedArtistId: (id) => set((state) => ({ selectedArtistId: id })),
+    setSelectedArtistId: (id) => set(() => ({ selectedArtistId: id })),
     selectedArtist: undefined,
-    setSelectedArtist: (artist) => set((state) => ({ selectedArtist: artist })),
+    setSelectedArtist: (artist) => set(() => ({ selectedArtist: artist })),
     selectedAlbumId: undefined,
-    setSelectedAlbumId: (id) => set((state) => ({ selectedAlbumId: id })),
+    setSelectedAlbumId: (id) => set(() => ({ selectedAlbumId: id })),
     selectedPodcastId: undefined,
-    setSelectedPodcastId: (id) => set((state) => ({ selectedPodcastId: id })),
+    setSelectedPodcastId: (id) => set(() => ({ selectedPodcastId: id })),
     selectedPodcast: undefined,
-    setSelectedPodcast: (podcast) =>
-      set((state) => ({ selectedPodcast: podcast })),
+    setSelectedPodcast: (podcast) => set(() => ({ selectedPodcast: podcast })),
     selectedAlbum: undefined,
-    setSelectedAlbum: (album) => set((state) => ({ selectedAlbum: album })),
+    setSelectedAlbum: (album) => set(() => ({ selectedAlbum: album })),
     isPlaying: false,
-    setIsPlaying: (value) => set((state) => ({ isPlaying: value })),
+    setIsPlaying: (value) => set(() => ({ isPlaying: value })),
     libraryCollectionSelected: "playlists",
     setLibraryCollectionSelected: (value) =>
-      set((state) => ({ libraryCollectionSelected: value })),
-  }))
+      set(() => ({ libraryCollectionSelected: value })),
+  })),
 );

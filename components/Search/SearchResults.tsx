@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useAppStore } from "../../store/AppStore";
 import { milliSecondsToMinutesAndSeconds } from "../../utils/time";
@@ -13,8 +13,7 @@ interface SearchResultsProps {
 export const SearchResults: React.FC<SearchResultsProps> = ({
   searchResults,
 }) => {
-  const [artistInfo, setArtistInfo] = useState<any>({});
-  const spotifyAPI = useSpotify();
+  const artistInfo = searchResults.artists?.items?.[0] ?? {};
   const {
     setSelectedPlaylistId,
     setSelectedArtistId,
@@ -24,18 +23,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   const router = useRouter();
   const spotifyApi = useSpotify();
   const { setCurrentTrackId, setIsPlaying } = useAppStore();
-
-  const getArtist = (id: string) => {
-    spotifyAPI
-      .getArtist(id)
-      .then((res: any) => {
-        setArtistInfo(res.body);
-        // console.log(res)
-      })
-      .catch((error: any) => {
-        console.error("Error: ", error.statusCode);
-      });
-  };
 
   const playSong = (song: any) => {
     setCurrentTrackId(song.id);
@@ -69,21 +56,21 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     router.push(`/podcast/${id}`);
   };
 
-  useEffect(() => {
-    Object.keys(searchResults as object).length > 0 &&
-      getArtist(searchResults.artists.items[0].id);
-  }, [searchResults]);
-
   return (
     <div>
       <section className="grid grid-cols-2 gap-4 max-w-[1080px]">
         <div>
           <h2 className="text-2xl font-bold">Top result</h2>
           <div className="pt-8 pl-6 pb-6 rounded mt-7 bg-[#181818]">
-            <img
+            <Image
+              width={300}
+              height={300}
+              sizes="(max-width: 768px) 50vw, 240px"
               className=" rounded-[50%] h-28 w-28"
               src={
-                Object.keys(artistInfo).length > 0 && artistInfo.images[0].url
+                (Object.keys(artistInfo).length > 0 &&
+                  artistInfo.images[0].url) ||
+                "/assets/images/placeholder.svg"
               }
               alt="Artist Profile Picture"
             />
@@ -116,9 +103,15 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               >
                 <div className="flex py-1.5 pr-1.5 w-full">
                   <div className="ml-2 relative">
-                    <img
+                    <Image
+                      width={300}
+                      height={300}
+                      sizes="(max-width: 768px) 50vw, 240px"
                       className="w-11 group-hover:opacity-30 rounded-sm h-auto"
-                      src={song?.album?.images[0]?.url}
+                      src={
+                        song?.album?.images[0]?.url ||
+                        "/assets/images/placeholder.svg"
+                      }
                       alt={song?.album?.name}
                     />
                     <div className={`${searchStyles.searchPlayButtton} `}>
@@ -162,9 +155,14 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 onClick={() => handleSelectArtist(artist.id)}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-full h-[190px] w-full p-2"
-                  src={artist?.images[0]?.url}
+                  src={
+                    artist?.images[0]?.url || "/assets/images/placeholder.svg"
+                  }
                   alt="Artist profile picture"
                 />
 
@@ -192,9 +190,12 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 key={album.id}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-md h-[190px] w-full p-2"
-                  src={album.images[0].url}
+                  src={album.images[0].url || "/assets/images/placeholder.svg"}
                   alt="Artist profile picture"
                 />
 
@@ -222,9 +223,14 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 key={playlist.id}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-lg h-[190px] w-full p-2"
-                  src={playlist.images[0].url}
+                  src={
+                    playlist.images[0].url || "/assets/images/placeholder.svg"
+                  }
                   alt="Playlist profile picture"
                 />
 
@@ -252,9 +258,14 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 onClick={() => handleSelectPodcast(podcast.id)}
                 className=" hover:bg-[#282828] cursor-pointer rounded-md p-2 pb-6"
               >
-                <img
+                <Image
+                  width={300}
+                  height={300}
+                  sizes="(max-width: 768px) 50vw, 240px"
                   className="rounded-lg h-[190px] w-full p-2"
-                  src={podcast.images[0].url}
+                  src={
+                    podcast.images[0].url || "/assets/images/placeholder.svg"
+                  }
                   alt="Playlist profile picture"
                 />
 

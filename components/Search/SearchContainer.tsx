@@ -1,11 +1,10 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useAppStore } from "../../store/AppStore";
-import { debounce } from "../../utils/debounce";
 import searchStyles from "./search.module.css";
 import { SearchResults } from "./SearchResults";
 import { YourTopGenres } from "./YourTopGenres";
@@ -18,48 +17,37 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState<object>({});
   const spotifyAPI = useSpotify();
-  const {
-    isProfileDrodownOpen,
-    setIsProfileDrodownOpen,
-  } = useAppStore();
+  const { isProfileDrodownOpen, setIsProfileDrodownOpen } = useAppStore();
 
-  const fetchSongs: (search: string) => void = useCallback(
-    debounce(async (string: string) => {
-      spotifyAPI
-        .search(string, ["track", "playlist", "show", "album", "artist"], {
+  useEffect(() => {
+    const query = searchInput.trim();
+    if (!query) return;
+    let active = true;
+    const timeout = setTimeout(() => {
+      void spotifyAPI
+        .search(query, ["track", "playlist", "show", "album", "artist"], {
           limit: 5,
           offset: 0,
         })
-        .then((res: any) => {
-          // console.log("Search results: ", res.body)
-          setSearchResults(
-            res.body
-            // .tracks.items.map((track: any) => {
-            //   return {
-            //     id: track.id,
-            //     artist: track.artists[0],
-            //     title: track.name,
-            //     uri: track.uri,
-            //     albumUrl: track.album.images[0].url,
-            //     popularity: track.popularity,
-            //     previewUrl: track.preview_url,
-            //   };
-            // }
-            // )
-          );
+        .then((response) => {
+          if (active) setSearchResults(response.body);
         })
-        .catch((error: any) => {
-          console.error("Error: ", error.statusCode);
+        .catch(() => {
+          /* Keep the last successful results if Spotify is unavailable. */
         });
-    }, 1000),
-    []
+    }, 300);
+    return () => {
+      active = false;
+      clearTimeout(timeout);
+    };
+  }, [searchInput, spotifyAPI]);
+
+  const hasResults = Object.values(searchResults).some(
+    (group: { items?: unknown[] }) => (group.items?.length ?? 0) > 0,
   );
-  useEffect(() => {
-    searchInput && fetchSongs(searchInput);
-  }, [searchInput]);
 
   return (
-    <div className="flex-grow bg-spotify-gray  h-screen overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow bg-spotify-gray  h-screen overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -81,10 +69,13 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
               <path d="M15.957 2.793a1 1 0 010 1.414L8.164 12l7.793 7.793a1 1 0 11-1.414 1.414L5.336 12l9.207-9.207a1 1 0 011.414 0z"></path>
             </svg>
           </button>
-          <div className=" flex-grow whitespace-nowrap">
+          <div className=" grow whitespace-nowrap">
             <div className="flex items-center">
               <div className={`${searchStyles.searchContainer}`}>
-                <form role="search">
+                <form
+                  role="search"
+                  onSubmit={(event) => event.preventDefault()}
+                >
                   <input
                     className={`${searchStyles.searchForm}`}
                     type="text"
@@ -94,6 +85,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
                     autoCapitalize="off"
                     spellCheck="false"
                     placeholder="Search songs"
+                    aria-label="Search songs"
                     id="searchInput"
                     onChange={(e) => setSearchInput(e.currentTarget.value)}
                     value={searchInput}
@@ -114,9 +106,16 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -139,15 +138,19 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
         </div>
       )}
       <section
-        className={`px-10 mt-6 bg-gradient-to-b to-spotify-gray  h-40 text-white pb-5 border-spotify-black `}
+        className={`px-10 mt-6 bg-linear-to-b to-spotify-gray  h-40 text-white pb-5 border-spotify-black `}
       >
         <div className="mt-10">
-          {Object.keys(searchResults as object).length > 0 ? (
-            <SearchResults searchResults={searchResults} />
+          {searchInput.trim() && Object.keys(searchResults).length > 0 ? (
+            hasResults ? (
+              <SearchResults searchResults={searchResults} />
+            ) : (
+              <p role="status">No results found.</p>
+            )
           ) : (
             <div className="mt-10">
-            <YourTopGenres />
-          </div>
+              <YourTopGenres />
+            </div>
           )}
         </div>
         {/* <div className="mt-12 flex justify-between items-center content-center">

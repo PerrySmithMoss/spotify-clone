@@ -1,13 +1,13 @@
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { colourFor } from "../../../constants/colors";
+import { useSpotify } from "../../../hooks/useSpotify";
 import { useAppStore } from "../../../store/AppStore";
 import artistStyles from "./artist.module.css";
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { shuffleArrayOfStrings } from "../../../utils/shuffleArray";
-import { colours } from "../../../constants/colors";
 import { ArtistsTopTracks } from "./ArtistsTopTracks";
-import { useSpotify } from "../../../hooks/useSpotify";
 
 interface ArtistProps {}
 
@@ -15,24 +15,23 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
   const {
     isProfileDrodownOpen,
     setIsProfileDrodownOpen,
-    selectedArtistId,
+    selectedArtistId: storedId,
     selectedArtist,
     setSelectedArtist,
     setSelectedArtistId,
-    setSelectedAlbumId
+    setSelectedAlbumId,
   } = useAppStore();
   const spotifyAPI = useSpotify();
   const router = useRouter();
+  const selectedArtistId =
+    typeof router.query.id === "string" ? router.query.id : storedId;
   const { data: session } = useSession();
-  const [colour, setColour] = useState<any>(null);
   const [artistsTopTracks, setArtistsTopTracks] = useState<object[]>([]);
   const [artistsAlbums, setArtistsAlbums] = useState<object[]>([]);
   const [relatedArtists, setRelatedArtists] = useState<object[]>([]);
   const [isShowMore, setIsShowMore] = useState(false);
 
-  useEffect(() => {
-    setColour(shuffleArrayOfStrings(colours).pop());
-  }, [selectedArtistId]);
+  const colour = colourFor(String(selectedArtistId ?? ""));
 
   useEffect(() => {
     if (typeof selectedArtistId === "string") {
@@ -43,8 +42,8 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
         })
         .catch((err) => console.log("Something went wrong: ", err));
     }
-  }, [spotifyAPI, selectedArtistId]);
-  
+  }, [spotifyAPI, selectedArtistId, setSelectedArtist]);
+
   useEffect(() => {
     if (typeof selectedArtistId === "string") {
       spotifyAPI
@@ -89,7 +88,7 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
   };
 
   return (
-    <div className="flex-grow pb-28 h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
+    <div className="grow pb-28 h-screen bg-[#121212] overflow-y-scroll scrollbar-hide select-none relative">
       <header className="flex justify-between mt-6 px-8">
         <div className="flex space-x-4">
           <button
@@ -116,9 +115,16 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
           onClick={() => setIsProfileDrodownOpen(!isProfileDrodownOpen)}
           className="flex items-center bg-[#282828] space-x-3  py-1 pl-1  cursor-pointer rounded-full pr-2"
         >
-          <img
+          <Image
+            alt=""
+            width={300}
+            height={300}
+            sizes="(max-width: 768px) 50vw, 240px"
             className="rounded-full w-8 h-8 text-white"
-            src={session?.user?.image}
+            src={
+              (session?.user?.image ?? undefined) ||
+              "/assets/images/placeholder.svg"
+            }
             // alt="Users Profile Picture"
           />
           <h2 className="truncate w-32 text-white text-sm font-bold">
@@ -143,11 +149,17 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
       {selectedArtist ? (
         <>
           <section
-            className={`flex items-end space-x-7 bg-gradient-to-b to-spotify-gray ${colour} h-[280px] text-white pl-7 pb-5`}
+            className={`flex items-end space-x-7 bg-linear-to-b to-spotify-gray ${colour} h-[280px] text-white pl-7 pb-5`}
           >
-            <img
+            <Image
+              width={300}
+              height={300}
+              sizes="(max-width: 768px) 50vw, 240px"
               className="w-56 h-56 shadow-2xl"
-              src={selectedArtist?.images[0]?.url}
+              src={
+                selectedArtist?.images[0]?.url ||
+                "/assets/images/placeholder.svg"
+              }
               alt="Artist picture"
             />
             <div className="pb-3">
@@ -188,11 +200,13 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
             </div>
             <div className="ml-3 mt-2">
               <button
-                disabled={
-                  artistsTopTracks.length === 0
-                }
+                disabled={artistsTopTracks.length === 0}
                 onClick={() => setIsShowMore(!isShowMore)}
-                className={artistsTopTracks.length === 0 ? `cursor-not-allowed uppercase text-xs text-[#b3b3b3] tracking-wider` : `uppercase text-xs text-[#b3b3b3] tracking-wider`}
+                className={
+                  artistsTopTracks.length === 0
+                    ? `cursor-not-allowed uppercase text-xs text-[#b3b3b3] tracking-wider`
+                    : `uppercase text-xs text-[#b3b3b3] tracking-wider`
+                }
               >
                 {isShowMore ? "Show Less" : "Show More"}
               </button>
@@ -208,14 +222,20 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
               {artistsAlbums &&
                 artistsAlbums?.map((album: any) => (
                   <div
-                  className=" cursor-pointer hover:bg-[#282828] p-3"
-                  key={album.id}
-                  onClick={() => handleSelectAlbum(album.id)}
+                    className=" cursor-pointer hover:bg-[#282828] p-3"
+                    key={album.id}
+                    onClick={() => handleSelectAlbum(album.id)}
                   >
                     <div>
-                      <img
+                      <Image
+                        width={300}
+                        height={300}
+                        sizes="(max-width: 768px) 50vw, 240px"
                         className="rounded-md h-48 w-48 "
-                        src={album.images[0].url}
+                        src={
+                          album.images[0].url ||
+                          "/assets/images/placeholder.svg"
+                        }
                         alt={album.name}
                       />
                     </div>
@@ -241,9 +261,15 @@ export const Artist: React.FC<ArtistProps> = ({}) => {
                     key={relatedArtist.id}
                   >
                     <div>
-                      <img
+                      <Image
+                        width={300}
+                        height={300}
+                        sizes="(max-width: 768px) 50vw, 240px"
                         className="rounded-md h-48 w-48 "
-                        src={relatedArtist.images[0].url}
+                        src={
+                          relatedArtist.images[0].url ||
+                          "/assets/images/placeholder.svg"
+                        }
                         alt={relatedArtist.name}
                       />
                     </div>

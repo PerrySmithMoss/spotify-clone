@@ -1,27 +1,12 @@
 import type { NextPage } from "next";
-import { Main } from "../../components/Main/Main";
 import Head from "next/head";
+import { Main } from "../../components/Main/Main";
+import { Player } from "../../components/Player/Player";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { useAppStore } from "../../store/AppStore";
-import { useEffect } from "react";
-import { Player } from "../../components/Player/Player";
-import { useSpotify } from "../../hooks/useSpotify";
 
 const IndividualPlaylist: NextPage = () => {
-  const { selectedPlaylist, setSelectedPlaylist, selectedPlaylistId } =
-    useAppStore();
-    const spotifyAPI = useSpotify();
-
-  useEffect(() => {
-    if (typeof selectedPlaylistId === "string") {
-      spotifyAPI
-        .getPlaylist(selectedPlaylistId)
-        .then((data) => {
-          setSelectedPlaylist(data.body);
-        })
-        .catch((err) => console.log("Something went wrong: ", err));
-    }
-  }, [spotifyAPI, selectedPlaylistId]);
+  const { selectedPlaylist } = useAppStore();
 
   return (
     <div className="bg-spotify-black h-screen overflow-hidden">
@@ -32,7 +17,7 @@ const IndividualPlaylist: NextPage = () => {
       </Head>
       <main className="flex">
         <Sidebar />
-        {selectedPlaylistId && selectedPlaylistId !== undefined && <Main />}
+        <Main />
       </main>
       <div className="sticky bottom-0">
         <Player />
@@ -42,23 +27,3 @@ const IndividualPlaylist: NextPage = () => {
 };
 
 export default IndividualPlaylist;
-
-// export const getServerSideProps = async (context: any) => {
-//   const { id } = context.query;
-//   let playlist;
-
-//   if (typeof id === "string") {
-//     spotifyAPI
-//       .getPlaylist(id)
-//       .then((data) => {
-//         playlist = data.body;
-//       })
-//       .catch((err) => console.log("Something went wrong: ", err));
-//   }
-
-//   return {
-//     props: {
-//       session: "Yo",
-//     },
-//   };
-// };

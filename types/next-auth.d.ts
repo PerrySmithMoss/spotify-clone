@@ -1,19 +1,22 @@
-import NextAuth from "next-auth"
+import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
   interface Session {
-    user: {
-      accessToken: string
-      refreshToken: string
-      username: string
-      image: string
-      name: string
-      id: string
-      email: string
-    },
-    error: unknown
+    user: NonNullable<DefaultSession["user"]> & {
+      id: string;
+      username: string;
+      accessToken?: string;
+    };
+    error?: "RefreshAccessTokenError";
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+    refreshToken?: string;
+    accessTokenExpires?: number;
+    username?: string;
+    error?: "RefreshAccessTokenError";
   }
 }

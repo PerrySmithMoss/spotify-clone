@@ -1,41 +1,30 @@
-import { VolumeUpIcon as VolumeDownIcon } from "@heroicons/react/outline";
-import { VolumeUpIcon } from "@heroicons/react/outline";
+import { SpeakerWaveIcon } from "@heroicons/react/24/outline";
 import {
-  RewindIcon,
+  ArrowUturnLeftIcon,
+  ArrowsRightLeftIcon,
+  BackwardIcon,
+  ForwardIcon,
   PauseIcon,
   PlayIcon,
-  FastForwardIcon,
-  ReplyIcon,
-  SwitchHorizontalIcon,
-} from "@heroicons/react/solid";
+} from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import { useSongInfo } from "../../hooks/useSongInfo";
 import { useSpotify } from "../../hooks/useSpotify";
 import { useAppStore } from "../../store/AppStore";
 import { debounce } from "../../utils/debounce";
-import playerStyles from "./player.module.css"
+import playerStyles from "./player.module.css";
 interface PlayerProps {}
 
 export const Player: React.FC<PlayerProps> = ({}) => {
   const spotifyApi = useSpotify();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const [volume, setVolume] = useState(50);
   const { currentTrackId, setCurrentTrackId, isPlaying, setIsPlaying } =
     useAppStore();
   const songInfo = useSongInfo();
-
-  const fetchCurrentSong = () => {
-    if (!songInfo) {
-      spotifyApi.getMyCurrentPlayingTrack().then((data) => {
-        setCurrentTrackId(data.body?.item?.id as string);
-        spotifyApi.getMyCurrentPlaybackState().then((data) => {
-          setIsPlaying(data.body?.is_playing);
-        });
-      });
-    }
-  };
 
   const handlePlayPause = () => {
     spotifyApi.getMyCurrentPlaybackState().then((data) => {
@@ -50,32 +39,67 @@ export const Player: React.FC<PlayerProps> = ({}) => {
   };
 
   useEffect(() => {
-    if (spotifyApi.getAccessToken() && !currentTrackId) {
-      fetchCurrentSong();
-      setVolume(50);
-    }
-  }, [currentTrackId, spotifyApi, session]);
+    if (!session?.user.accessToken || currentTrackId) return;
+    let active = true;
+    void Promise.all([
+      spotifyApi.getMyCurrentPlayingTrack(),
+      spotifyApi.getMyCurrentPlaybackState(),
+    ])
+      .then(([track, playback]) => {
+        if (!active) return;
+        if (track.body?.item?.id) setCurrentTrackId(track.body.item.id);
+        setIsPlaying(playback.body?.is_playing ?? false);
+      })
+      .catch(() => {
+        /* No active Spotify device is a normal playback state. */
+      });
+    return () => {
+      active = false;
+    };
+  }, [
+    currentTrackId,
+    spotifyApi,
+    session?.user.accessToken,
+    setCurrentTrackId,
+    setIsPlaying,
+  ]);
 
-  const debouncedAdjustVolume: (volume: number) => void = useCallback(
-    debounce((volume: number) => {
-      spotifyApi.setVolume(volume).catch((err) => {});
-    }, 300),
-    []
+  const debouncedAdjustVolume = useMemo(
+    () =>
+      debounce((value: number) => {
+        if (spotifyApi.getAccessToken()) {
+          void spotifyApi.setVolume(value).catch(() => {
+            /* Playback can be unavailable. */
+          });
+        }
+      }, 300),
+    [spotifyApi],
   );
 
-  useEffect(() => {
-    if (volume > 0 && volume < 100) {
-      debouncedAdjustVolume(volume);
-    }
-  }, [volume]);
+  useEffect(
+    () => () => debouncedAdjustVolume.cancel(),
+    [debouncedAdjustVolume],
+  );
 
+  const adjustVolume = (value: number) => {
+    const clamped = Math.max(0, Math.min(100, value));
+    setVolume(clamped);
+    debouncedAdjustVolume(clamped);
+  };
 
   return (
-    <div className={`h-20 bg-gradient-to-b ${playerStyles.player} text-white grid grid-cols-3 text-sm md:text-base px-2 md:px-8`}>
+    <div
+      className={`h-20 bg-linear-to-b ${playerStyles.player} text-white grid grid-cols-3 text-sm md:text-base px-2 md:px-8`}
+    >
       <div className="flex items-center space-x-4">
-        <img
+        <Image
+          width={300}
+          height={300}
+          sizes="(max-width: 768px) 50vw, 240px"
           className="hidden md:inline h-12 w-12"
-          src={songInfo?.album?.images?.[0].url}
+          src={
+            songInfo?.album?.images?.[0].url || "/assets/images/placeholder.svg"
+          }
           alt=""
         />
         <div>
@@ -86,8 +110,8 @@ export const Player: React.FC<PlayerProps> = ({}) => {
         </div>
       </div>
       <div className="flex items-center justify-center space-x-5">
-        <SwitchHorizontalIcon className="w-6 h-6 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
-        <RewindIcon className="w-7 h-7 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
+        <ArrowsRightLeftIcon className="w-6 h-6 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
+        <BackwardIcon className="w-7 h-7 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
         {isPlaying ? (
           <PauseIcon
             className="w-12 h-12 cursor-pointer hover:scale-125 transition transform duration-100 ease-out text-[#18D860]"
@@ -99,19 +123,20 @@ export const Player: React.FC<PlayerProps> = ({}) => {
             onClick={handlePlayPause}
           />
         )}
-        <FastForwardIcon className="w-7 h-7 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
-        <ReplyIcon className="w-6 h-6 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
+        <ForwardIcon className="w-7 h-7 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
+        <ArrowUturnLeftIcon className="w-6 h-6 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
       </div>
 
       <div className="flex items-center space-x-3 md:space-x-4 justify-end p-5">
-        <VolumeDownIcon
+        <SpeakerWaveIcon
           className="w-5 h-5 cursor-pointer hover:scale-125 transition transform duration-100 ease-out"
-          onClick={() => volume > 0 && setVolume(volume - 10)}
+          onClick={() => adjustVolume(volume - 10)}
         />
         <input
           type="range"
+          aria-label="Volume"
           value={volume}
-          onChange={(e) => setVolume(Number(e.target.value))}
+          onChange={(e) => adjustVolume(Number(e.target.value))}
           min={0}
           max={100}
           className="w-14 md:w-36 "
