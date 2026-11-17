@@ -21,6 +21,8 @@ export default defineConfig({
     env: {
       NEXTAUTH_URL: "http://localhost:3000",
       NEXTAUTH_SECRET: "e2e-only-secret-32-characters-minimum",
+      SPOTIFY_CLIENT_ID: "e2e-fixture-client-id",
+      SPOTIFY_CLIENT_SECRET: "e2e-fixture-client-secret",
     },
     timeout: 60_000,
   },
