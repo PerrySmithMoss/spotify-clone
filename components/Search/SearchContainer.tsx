@@ -15,7 +15,9 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
-  const [searchResults, setSearchResults] = useState<object>({});
+  const [searchResults, setSearchResults] = useState<SpotifyApi.SearchResponse>(
+    {},
+  );
   const spotifyAPI = useSpotify();
   const { isProfileDrodownOpen, setIsProfileDrodownOpen } = useAppStore();
 
@@ -43,7 +45,8 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   }, [searchInput, spotifyAPI]);
 
   const hasResults = Object.values(searchResults).some(
-    (group: { items?: unknown[] }) => (group.items?.length ?? 0) > 0,
+    (group: { items?: unknown[] }) =>
+      group?.items?.some((item) => item != null) ?? false,
   );
 
   return (
