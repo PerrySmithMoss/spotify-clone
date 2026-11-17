@@ -82,7 +82,7 @@ const test = base.extend<{ spotify: SpotifyFixture }>({
       ]);
       await page.route("https://api.spotify.com/**", async (route) => {
         const url = new URL(route.request().url());
-        const path = url.pathname.replace("/v1", "");
+        const path = url.pathname.replace("/v1", "").replace(/\/$/, "");
         const headers = {
           "access-control-allow-origin": "*",
           "access-control-allow-methods": "GET, PUT, OPTIONS",
@@ -137,6 +137,44 @@ const test = base.extend<{ spotify: SpotifyFixture }>({
         else if (path === "/artists/artist/related-artists")
           data = { artists: [artist] };
         else if (path === "/tracks/track") data = track;
+        else if (
+          path === "/search" &&
+          url.searchParams.get("q") === "sparse-results"
+        )
+          data = {
+            tracks: {
+              items: [
+                null,
+                { ...track, album: { ...album, images: [] }, artists: [] },
+              ],
+            },
+            artists: { items: [null, { ...artist, images: [] }] },
+            albums: { items: [null, { ...album, images: [], artists: [] }] },
+            playlists: {
+              items: [null, { ...playlist, images: null, owner: null }],
+            },
+            shows: {
+              items: [
+                null,
+                {
+                  id: "show",
+                  name: "Fixture Podcast",
+                  images: [],
+                  publisher: "Fixture Publisher",
+                },
+              ],
+            },
+          };
+        else if (
+          path === "/search" &&
+          url.searchParams.get("q") === "null-only"
+        )
+          data = { tracks: { items: [null] } };
+        else if (
+          path === "/search" &&
+          url.searchParams.get("q") === "tracks-only"
+        )
+          data = { tracks: { items: [track] } };
         else if (
           path === "/search" &&
           url.searchParams.get("q") === "no-results"
@@ -265,9 +303,9 @@ test("rejected playback commands show a device error and preserve the playback s
   await page
     .getByRole("button", { name: "Play Fixture Song", exact: true })
     .click();
-  await expect(page.getByRole("alert").filter({ hasText: "Open Spotify on a device" })).toHaveText(
-    "Open Spotify on a device and start a song, then try again.",
-  );
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Open Spotify on a device" }),
+  ).toHaveText("Open Spotify on a device and start a song, then try again.");
   await expect(
     page.getByRole("button", { name: "Resume playback", exact: true }),
   ).toBeVisible();
@@ -278,14 +316,51 @@ test("rejected playback commands show a device error and preserve the playback s
   await expect(
     page.getByRole("button", { name: "Pause playback", exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole("alert").filter({ hasText: "Open Spotify on a device" })).toHaveCount(0);
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Open Spotify on a device" }),
+  ).toHaveCount(0);
   spotify.failPlayback = true;
   await page
     .getByRole("button", { name: "Pause playback", exact: true })
     .click();
-  await expect(page.getByRole("alert").filter({ hasText: "Open Spotify on a device" })).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Open Spotify on a device" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Pause playback", exact: true }),
   ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("search tolerates unavailable items, missing images and omitted result categories", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/search");
+  await page
+    .getByRole("textbox", { name: "Search songs" })
+    .fill("sparse-results");
+  await expect(
+    page.getByText("Fixture Podcast", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Fixture Song", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByText("Fixture Playlist", { exact: true })
+      .filter({ visible: true })
+      .last(),
+  ).toBeVisible();
+  await page.getByRole("textbox", { name: "Search songs" }).fill("tracks-only");
+  await expect(page.getByText("Fixture Podcast", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(
+    page.getByText("Fixture Song", { exact: true }).first(),
+  ).toBeVisible();
+  await page.getByRole("textbox", { name: "Search songs" }).fill("null-only");
+  await expect(page.getByRole("status")).toHaveText("No results found.");
   expect(errors).toEqual([]);
 });
